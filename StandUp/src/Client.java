@@ -17,6 +17,10 @@ public class Client implements Runnable {
 	//waitingroom
 	//gameroom
 	
+	//유저 정보 
+	User user;
+	
+	
 	public Client() {
 		//생성과 함께 ui 생성
 		//login asd= new loginui
@@ -76,9 +80,9 @@ public class Client implements Runnable {
 	 void uiTerminated(){
 		 
 	 }
-	 //서버에 접속을 요청하고 접속이 되었는지 accessReady를 반환함
+	//서버에 접속을 요청하고 접속이 되었는지 accessReady를 반환함
 	 boolean serverAccess(){
-		 //접속이 안되어있을때
+		//접속이 안되어있을때
 		if(!accessReady){
 			socket=null;
 			//소켓을 접속시킴 
