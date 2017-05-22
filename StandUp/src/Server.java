@@ -10,14 +10,14 @@ public class Server extends Thread {
 	}
  
 
-	// ·±¸Ş¼Òµå ¾È¿¡¼­ ¼ÒÄÏÀÇ ÀÎ,¾Æ¿ô ½ºÆ®¸²À» ¿¬°áÇÏ°í ¹ÙÀÌÆ® ¹è¿­ ¼±¾ğÇØ¼­ °è¼ÓÇØ¼­ ÀÔ·ÂÀ» ¹Ş¾Æ µéÀÎ´Ù.
+	// ëŸ°ë©”ì†Œë“œ ì•ˆì—ì„œ ì†Œì¼“ì˜ ì¸,ì•„ì›ƒ ìŠ¤íŠ¸ë¦¼ì„ ì—°ê²°í•˜ê³  ë°”ì´íŠ¸ ë°°ì—´ ì„ ì–¸í•´ì„œ ê³„ì†í•´ì„œ ì…ë ¥ì„ ë°›ì•„ ë“¤ì¸ë‹¤.
  
 	@Override
 	public void run() {
 		try{
 			InputStream in = socket.getInputStream();
 			OutputStream out = socket.getOutputStream();
-			out.write("Áñ°Ì°Ô °ÔÀÓÇÏ¼¼¿ä~ \r".getBytes("euc-kr"));
+			out.write("ì¦ê²ê²Œ ê²Œì„í•˜ì„¸ìš”~ \r".getBytes("utf-8"));
    
 			byte[] buffer = new byte[1024];
 			int read;
@@ -39,16 +39,16 @@ public class Server extends Thread {
   
 		System.out.println("Starting on port" + args[0]);
   
-		// ¼­¹ö¼ÒÄÏ ¼±¾ğ 
+		// ì„œë²„ì†Œì¼“ ì„ ì–¸ 
 		ServerSocket serverSocket = new ServerSocket(Integer.parseInt(args[0]));
   
-		// ¸ŞÀÎÀÇ while¹® 
-		// ¹İº¹¹®ÀÌ °è¼ÓÇØ¼­ µ¹¸é¼­ ¼­¹ö¼ÒÄÏÀÌ ÀÀ´äÀ» °è¼Ó ±â´Ù¸± ¼ö ÀÖ°Ô ÇÑ´Ù. 
+		// ë©”ì¸ì˜ whileë¬¸ 
+		// ë°˜ë³µë¬¸ì´ ê³„ì†í•´ì„œ ëŒë©´ì„œ ì„œë²„ì†Œì¼“ì´ ì‘ë‹µì„ ê³„ì† ê¸°ë‹¤ë¦´ ìˆ˜ ìˆê²Œ í•œë‹¤. 
  
 		while(true){
-			//  accept()¸Ş¼Òµå·Î Å¬¶óÀÌ¾ğÆ®¿¡°Ô »õ·Î¿î ¼ÒÄÏÀ» ¹İÈ¯ -> TCP ¿¬°áÀÌ ¸¸µé¾îÁü 
+			//  accept()ë©”ì†Œë“œë¡œ í´ë¼ì´ì–¸íŠ¸ì—ê²Œ ìƒˆë¡œìš´ ì†Œì¼“ì„ ë°˜í™˜ -> TCP ì—°ê²°ì´ ë§Œë“¤ì–´ì§ 
 			Socket client = serverSocket.accept();
-			//  ¼­¹ö°¡ ½ºÅ¸Æ® µÇ°í ¹İº¹¹®À» ºüÁ® ³ª°¨  
+			//  ì„œë²„ê°€ ìŠ¤íƒ€íŠ¸ ë˜ê³  ë°˜ë³µë¬¸ì„ ë¹ ì ¸ ë‚˜ê°  
 			Server server = new Server(client);
 			server.start();
 		}
