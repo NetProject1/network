@@ -13,8 +13,8 @@ public class Client implements Runnable {
 	boolean accessReady=false;
 	
 	//UI 구현시 
-	//loginUI 
-	//waitingroom
+	LoginUI login;
+	WaitRoomUI waitRoom;
 	//gameroom
 	
 	//유저 정보 
@@ -22,8 +22,8 @@ public class Client implements Runnable {
 	
 	
 	public Client() {
-		//생성과 함께 ui 생성
-		//login asd= new loginui
+		//생성과 함께 ui 생성 ui와 연결했을시 
+		login= new LoginUI(this);
 		Thread thread=new Thread(this);
 		thread.start();
 		
@@ -75,6 +75,12 @@ public class Client implements Runnable {
 	}
 	//메세지를 받아와 해석해 행동함
 	 void msgParsing(String receiveMsg) {
+		//로그인시
+		 	//성공
+		 	//실패
+		 		//실패시엔 소켓 dis dos close 함.
+		//게임진행시
+		//채팅 받아왔을시
 		
 	}
 	 void uiTerminated(){
@@ -98,7 +104,6 @@ public class Client implements Runnable {
 					dis=new DataInputStream(socket.getInputStream());
 					dos=new DataOutputStream(socket.getOutputStream());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
@@ -111,5 +116,16 @@ public class Client implements Runnable {
 		return accessReady;
 		 
 	 }
-	
+	//로그인시 로그인 정보를 받아옴. 로그인ui 를 닫고 대기실 ui를 띄움
+	  void login(){
+		 //받아온 정보 user에 입력
+		 //user.id nickname pw money win lose
+		  waitRoom =new WaitRoomUI(this);
+		  login.dispose();
+		 
+	 }
+	 //로그 아웃시 모든창을 닫고 소켓 반환
+	 private void logout(){
+		 
+	 }
 }
