@@ -16,19 +16,11 @@ public class LoginUI extends JFrame{
 	private JPasswordField pwFD;
 	private JTextField ipFD;
 	
+	//회원가입
+	SignUpUI sign=null;
 	//클라이언트와 ui가 서로 참조함.
 	Client client;
 
-	/**
-	 * Launch the application.
-	 */
-	
-
-/*
-	public static void main(String[] args) {
-		new LoginUI();
-	}
-	*/
 	/**
 	 * Create the application.
 	 */
@@ -102,6 +94,8 @@ public class LoginUI extends JFrame{
 		serverBTN.setBounds(293, 84, 142, 23);
 		getContentPane().add(serverBTN);
 		
+		
+		
 		serverBTN.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e){
@@ -110,33 +104,34 @@ public class LoginUI extends JFrame{
 		
 		});
 		
+		JButton signupBTN = new JButton("회원가입");
+		signupBTN.setBounds(293, 170, 97, 23);
+		getContentPane().add(signupBTN);
 		
+		signupBTN.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				if(sign==null){
+					sign= new SignUpUI(client);
+				}else{
+					sign.dispose();
+					sign=new SignUpUI(client);
+				}
+			}
+		
+		});
 		//프레임 보이기
 		setVisible(true);
 	}
 	
 	void LoginSubmit(){
 		System.out.println(idFD.getText()+":아이디 "+pwFD.getText()+":비밀번호 로그인");
-		
-		client.login();
-		/*
-		new Thread(new Runnable(){
-			@Override
-			public void run() {
-				if(client.serverAccess()){
-					try {
-						//아직 어떻게 보낼지는 모르겠는데 프로토콜을 만들어서 보내야함.
-						client.dos.writeUTF("로그인");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}else{
-					//접속 에러
-				}
-			}
-			
-		}).start();		
-		*/
+		try {
+			client.dos.writeUTF(MsgProtocol.LOGIN+"/"+idFD.getText()+"/"+pwFD.getText());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	void setIpPort(){

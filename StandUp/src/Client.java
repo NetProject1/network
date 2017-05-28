@@ -2,9 +2,13 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.StringTokenizer;
+
+import javax.swing.JOptionPane;
 
 public class Client implements Runnable {
-	static int PORT=9999; //서버 포트
+	static int PORT=7777; //서버 포트
 	static String IP=""; //서버 아이피
 	
 	Socket socket; //서버와 접속할 소켓
@@ -36,15 +40,8 @@ public class Client implements Runnable {
 	
 	@Override
 	public void run() {
-		//접속이 안되어있다면 계속 대기한다
-		while(!accessReady){
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		//접속이 됬다면
+		serverAccess();
+		
 		//계속해서 서버로부터 메세지를 전달받아 해석한다
 		while(true){
 			try {
@@ -52,12 +49,13 @@ public class Client implements Runnable {
 				String receiveMsg= dis.readUTF();
 				//해석한다
 				msgParsing(receiveMsg);
-				
+
 			} catch (IOException e) {
 				//읽어오다 에러가 나면(서버가 접속을 끊으면)
 				//소켓을 닫는다.
 				e.printStackTrace();
 				try{
+					System.out.println("서버가 종료되었습니다.");
 					dis.close();
 					dos.close();
 					socket.close();
@@ -75,6 +73,35 @@ public class Client implements Runnable {
 	}
 	//메세지를 받아와 해석해 행동함
 	 void msgParsing(String receiveMsg) {
+		 StringTokenizer token=new StringTokenizer(receiveMsg, "/"); //토큰
+		 String protocol= token.nextToken();//토큰으로 분리된 스트링
+		 String id,pw, nick;
+		 String rNum, rName, rUsers;
+		 String result;
+		 System.out.println(protocol);
+		 switch (protocol) {
+		 //로그인시 ok 이면 user 정보를 갱신하고 대기실ui
+		case MsgProtocol.LOGIN:
+			result=token.nextToken();
+				if(result.equals("OK")){
+					user=new User();
+					user.id=token.nextToken();
+					user.pw=token.nextToken();
+					user.nickName=token.nextToken();
+					user.Money=Integer.parseInt(token.nextToken());
+					user.win=Integer.parseInt(token.nextToken());
+					user.lose=Integer.parseInt(token.nextToken());
+					
+					login();
+				}else{
+					JOptionPane.showMessageDialog(null, "로그인 실패: 아이디 비밀번호를 확인해주세요.");
+				}
+			break;
+		case MsgProtocol.LOGOUT:
+			break;
+		case MsgProtocol.SIGNUP:
+			break;
+		}
 		//로그인시
 		 	//성공
 		 	//실패
@@ -86,40 +113,51 @@ public class Client implements Runnable {
 	 void uiTerminated(){
 		 
 	 }
-	//서버에 접속을 요청하고 접속이 되었는지 accessReady를 반환함
-	 boolean serverAccess(){
-		//접속이 안되어있을때
-		if(!accessReady){
-			socket=null;
-			//소켓을 접속시킴 
-			try {
-				socket=new Socket(IP, PORT);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//소켓이 접속되었다면
-			if(socket.isBound()){
-				try {
-					dis=new DataInputStream(socket.getInputStream());
-					dos=new DataOutputStream(socket.getOutputStream());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				accessReady=true;
-			}
-		}
-		 
-		
-		
-		return accessReady;
+	 //서버 접속될때까지 기다리면서 계속 접속 수행.
+	 void serverAccess(){
+		 while(!accessReady){
+			 try {
+				 socket= new Socket(IP, PORT);
+			 } catch (UnknownHostException e) {
+				 e.printStackTrace();
+			 } catch (IOException e) {
+				 // TODO Auto-generated catch block
+				 e.printStackTrace();
+			 }
+			 if(socket!=null){
+				 if(socket.isBound()){
+					 try {
+						 dis=new DataInputStream(socket.getInputStream());
+						 dos=new DataOutputStream(socket.getOutputStream());
+					 } catch (IOException e) {
+						 // TODO Auto-generated catch block
+						 e.printStackTrace();
+					 }
+					 accessReady=true;
+				 }else{
+					 try {
+						 JOptionPane.showMessageDialog(null, "서버 접속 오류...");
+						 Thread.sleep(100);
+					 } catch (InterruptedException e) {
+						 // TODO Auto-generated catch block
+						 e.printStackTrace();
+					 }
+				 }
+			 }else{
+				 try {
+					 JOptionPane.showMessageDialog(null, "서버 접속 오류...");
+					 Thread.sleep(100);
+				 } catch (InterruptedException e) {
+					 // TODO Auto-generated catch block
+					 e.printStackTrace();
+				 }
+			 }
+		 }
 		 
 	 }
 	//로그인시 로그인 정보를 받아옴. 로그인ui 를 닫고 대기실 ui를 띄움
 	  void login(){
-		 //받아온 정보 user에 입력
-		 //user.id nickname pw money win lose
+
 		  waitRoom =new WaitRoomUI(this);
 		  login.dispose();
 		 
@@ -128,4 +166,5 @@ public class Client implements Runnable {
 	 private void logout(){
 		 
 	 }
+
 }
