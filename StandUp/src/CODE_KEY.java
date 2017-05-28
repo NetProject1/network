@@ -1,5 +1,3 @@
-package Model;
-
 public class CODE_KEY {
 	public static final String CODE_GAMESTART = "GAMESTART";
 	public static final String CODE_TOKEN_ON = "CODETOKENON";
@@ -12,9 +10,5 @@ public class CODE_KEY {
 	public static final String CODE_WIN = "GAMEWIN";
 	public static final String CODE_LOSE = "GAMELOSE";
 	public static final String CODE_GAMEEND = "GAMEEND";
-	
-	//
-	//예시
-	// CODE_GAME_CALL
 	
 }
