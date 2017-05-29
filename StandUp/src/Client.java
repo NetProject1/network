@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 
 public class Client implements Runnable {
 	static int PORT=7777; //서버 포트
-	static String IP=""; //서버 아이피
+	static String IP="111.111.111.11"; //서버 아이피
 	
 	Socket socket; //서버와 접속할 소켓
 	DataInputStream dis; // 입출력 스트림
@@ -137,7 +137,7 @@ public class Client implements Runnable {
 				 }else{
 					 try {
 						 JOptionPane.showMessageDialog(null, "서버 접속 오류...");
-						 Thread.sleep(100);
+						 Thread.sleep(500);
 					 } catch (InterruptedException e) {
 						 // TODO Auto-generated catch block
 						 e.printStackTrace();
@@ -146,7 +146,7 @@ public class Client implements Runnable {
 			 }else{
 				 try {
 					 JOptionPane.showMessageDialog(null, "서버 접속 오류...");
-					 Thread.sleep(100);
+					 Thread.sleep(500);
 				 } catch (InterruptedException e) {
 					 // TODO Auto-generated catch block
 					 e.printStackTrace();

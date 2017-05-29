@@ -89,6 +89,8 @@ public class LoginUI extends JFrame{
 		ipFD.setBounds(146, 85, 116, 21);
 		getContentPane().add(ipFD);
 		ipFD.setColumns(10);
+		//처음시작시 정해져있는 ip를 보여줌
+		ipFD.setText(client.IP);
 		
 		JButton serverBTN = new JButton("서버 ip 변경");
 		serverBTN.setBounds(293, 84, 142, 23);

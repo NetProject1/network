@@ -82,35 +82,46 @@ public class DBDAO {
 		return result;
 		
 	}
-	void signUp(String uid,String upw, String unickname){
+	int signUp(String uid,String upw, String unickname){
+		int result=1;
 		try {
 			//db 접속
 			ConnectDB();
 			
-			sql= "insert into player(id,password,nickname,money,win,lose) "+
-					"values(?,?,?,?,?,?)";
-			pstmt=conn.prepareStatement(sql);
-			pstmt.setString(1, uid);
-			pstmt.setString(2, upw);
-			pstmt.setString(3, unickname);
-			pstmt.setInt(4, 1000);
-			pstmt.setInt(5, 0);
-			pstmt.setInt(6, 0);
+			//쿼리문 실행
+			sql="select * from player where id='" + uid + "'";
+			rs=stmt.executeQuery(sql);
+			//아이디 같은 정보가 없다면.
+			if(rs.next()==false){
+				sql= "insert into player(id,password,nickname,money,win,lose) "+
+						"values(?,?,?,?,?,?)";
+				pstmt=conn.prepareStatement(sql);
+				pstmt.setString(1, uid);
+				pstmt.setString(2, upw);
+				pstmt.setString(3, unickname);
+				pstmt.setInt(4, 1000);
+				pstmt.setInt(5, 0);
+				pstmt.setInt(6, 0);
 
-			int r=pstmt.executeUpdate();
-			if(r>0){
-				System.out.println("가입 성공");
+				int r=pstmt.executeUpdate();
+				if(r>0){
+					System.out.println("가입 성공");
+					result=0;
+				}else{
+					System.out.println("가입 실패");
+					result=1;
+				}
+				
 			}else{
-				System.out.println("가입 실패");
-
+				result=1;
 			}
-
+			
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		return result;
 	}
 	
 }
