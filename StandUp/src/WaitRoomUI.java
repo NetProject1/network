@@ -3,11 +3,17 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.SoftBevelBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.border.BevelBorder;
 import java.awt.Color;
 import javax.swing.border.LineBorder;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
@@ -23,6 +29,7 @@ public class WaitRoomUI extends JFrame{
 
 	private JTextField chatInputFD;
 	private JTable roomListTable;
+	
 	JTextArea chatArea;
 	
 	JLabel lblNewLabel, lblNewLabel_1;
@@ -37,11 +44,11 @@ public class WaitRoomUI extends JFrame{
 	/**
 	 * Launch the application.
 	 */
-	/*
+	
 	public static void main(String[] args) {
 		new WaitRoomUI();
 	}
-	*/
+	
 	/**
 	 * Create the application.
 	 */
@@ -75,46 +82,33 @@ public class WaitRoomUI extends JFrame{
 		roomListScroll = new JScrollPane();
 		roomPN.add(roomListScroll, BorderLayout.CENTER);
 		
-		roomListTable = new JTable();
+		
+		String[] columNames={"방 번호","방 제목 ","방장","방 인원"};
+		Object rowData[][]={
+		};
+		String rowd[][]={};
+		DefaultTableModel model= new DefaultTableModel(rowd, columNames ){
+			public boolean isCellEditable(int row,int column){
+				return false;
+			}
+		};
+		roomListTable = new JTable(model);
+		roomListScroll.setViewportView(roomListTable);
 		roomListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		roomListTable.setBorder(new LineBorder(new Color(0, 0, 0)));
-		roomListTable.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
-			},
-			new String[] {
-				"\uBC29 \uBC88\uD638", "\uBC29 \uC81C\uBAA9", "\uBC29\uC7A5", "\uC778\uC6D0"
-			}
-		) {
-			boolean[] columnEditables = new boolean[] {
-				false, false, false, false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
+
+		Object[] tempp = {"2","섰다 테스트","방장","이다"}; 
+		model.addRow(tempp);
+		
+		
+		roomListTable.addMouseListener(new MouseAdapter() {
+			 public void mousePressed(MouseEvent evt) {
+				 if(evt.getClickCount()==2){
+				 System.out.println("오잉"+
+			 roomListTable.getValueAt( roomListTable.getSelectedRow() , 0 ).toString());
+			    }
+			 }
 		});
-		roomListTable.getColumnModel().getColumn(0).setResizable(false);
-		roomListTable.getColumnModel().getColumn(0).setPreferredWidth(57);
-		roomListTable.getColumnModel().getColumn(1).setResizable(false);
-		roomListTable.getColumnModel().getColumn(1).setPreferredWidth(167);
-		roomListTable.getColumnModel().getColumn(2).setResizable(false);
-		roomListTable.getColumnModel().getColumn(2).setPreferredWidth(90);
-		roomListTable.getColumnModel().getColumn(3).setResizable(false);
-		roomListScroll.setViewportView(roomListTable);
 		
 		chatPN = new JPanel();
 		chatPN.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));

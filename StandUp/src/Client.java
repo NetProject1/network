@@ -72,7 +72,7 @@ public class Client implements Runnable {
 		uiTerminated();
 	}
 	//메세지를 받아와 해석해 행동함
-	 void msgParsing(String receiveMsg) {
+	 synchronized void msgParsing(String receiveMsg) {
 		 StringTokenizer token=new StringTokenizer(receiveMsg, "/"); //토큰
 		 String protocol= token.nextToken();//토큰으로 분리된 스트링
 		 String id,pw, nick;
