@@ -69,6 +69,10 @@ public class GameServer {
 				GameServerReceiver receiver = new GameServerReceiver(socket, playerNum);
 				playerNum++;
 				receiver.start();
+				
+				if(playerNum >= 4){
+					break;
+				}
 			}
 			// gameStart();
 		} catch (IOException e) {
@@ -96,7 +100,8 @@ public class GameServer {
 // 			return player0;
 // 		}
 // 	}
-
+	
+        // player card를 생성하고 족보에따라 winner를 결정(using judge method)
 	public void dealCard() {
 		int[] card = new int[21];
 		Random random = new Random(System.currentTimeMillis());
@@ -112,16 +117,16 @@ public class GameServer {
 	}
 
 	public void setPriority() {
-		priority[13][18] = Integer.MAX_VALUE;
-		priority[11][13] = 10000;
-		priority[11][18] = 10000;
+		priority[13][18] = Integer.MAX_VALUE; //38광땡
+		priority[11][13] = 10000; //13광땡
+		priority[11][18] = 10000; //18
 
 		for (int i = 1; i <= 10; i++) {
 			for (int j = 11; j <= 20; j++) {
 				int num = (i+j)%10;
-				priority[i][j] = num;
+				priority[i][j] = num; // 끗
 				if((i+10)==j){
-					priority[i][j] = priority[i][j]+1000;
+					priority[i][j] = priority[i][j]+1000; // 땡
 				}
 			}
 		}
@@ -146,6 +151,23 @@ public class GameServer {
 		priority[4][6] = priority[4][6] + 600;
 		priority[4][16] = priority[4][16] + 600;
 		priority[14][16] = priority[14][16] + 600;
+		//갑오
+		priority[1][9] = priority[1][9]+550;
+		priority[1][19] = priority[1][19]+550;
+		priority[10][9] = priority[10][9]+550;
+		priority[10][19] = priority[10][19]+550;
+		priority[2][7] = priority[2][7]+550;
+		priority[2][17] = priority[2][17]+550;
+		priority[12][7] = priority[12][7]+550;
+		priority[12][17] = priority[12][17]+550;
+		priority[3][6] = priority[3][6]+550;
+		priority[3][16] = priority[3][16]+550;
+		priority[13][6] = priority[13][6]+550;
+		priority[13][16] = priority[13][16]+550;
+		priority[3][6] = priority[3][6]+550;
+		priority[4][15] = priority[4][15]+550;
+		priority[13][6] = priority[13][6]+550;
+		priority[13][16] = priority[13][16]+550;
 		//3,7땡잡이
 		priority[3][17] = priority[3][17] + 500;
 		priority[3][7] = priority[3][7] + 500;
