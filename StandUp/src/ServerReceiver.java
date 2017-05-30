@@ -77,6 +77,22 @@ public class ServerReceiver extends Thread {
 		case MsgProtocol.LOGOUT:
 			break;
 		case MsgProtocol.SIGNUP:
+			id=token.nextToken();
+			pw=token.nextToken();
+			nick=token.nextToken();
+			//아이디가 존재하지않음
+			if(dbdao.checkID(id)==0){
+				if(dbdao.signUp(id, pw, nick)==0){
+					user.dos.writeUTF(MsgProtocol.SIGNUP+"/OK");
+					break;
+				}else{
+					user.dos.writeUTF(MsgProtocol.SIGNUP+"/FAIL");
+				}
+			}else{
+			//존재함
+				user.dos.writeUTF(MsgProtocol.SIGNUP+"/FAIL");
+			}
+			
 			break;
 		case MsgProtocol.MAKEROOM:
 			rName=token.nextToken();

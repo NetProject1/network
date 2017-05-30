@@ -150,4 +150,9 @@ public class LoginUI extends JFrame{
 	void serverAccessConfirm(){
 		ServerAccessLB.setText("서버 접속됨.");
 	}
+	void closeSignUpUI(){
+		if(sign!=null){
+			sign.dispose();
+		}
+	}
 }

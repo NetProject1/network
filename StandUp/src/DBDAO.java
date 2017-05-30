@@ -65,6 +65,30 @@ public class DBDAO {
 		
 		return result;
 	}
+	//ID만 검색
+	int checkID(String id){
+		this.id=id;
+		//검색결과 아이디가 존재 하면  1을 return 없다면 0을리턴
+		int result=1;
+		try {
+			//db 접속
+			ConnectDB();
+			
+			stmt=conn.createStatement();
+			
+			//쿼리문 실행
+			sql="select * from player where id='" + id + "'";
+			rs=stmt.executeQuery(sql);
+			
+			if(rs.next()==false){
+				result=0;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result;		
+	}
 	//ID, PASSWORD 를 받아와 검색
 	int checkIDPW(String id, String pw){
 		this.id=id;

@@ -100,6 +100,13 @@ public class Client implements Runnable {
 		case MsgProtocol.LOGOUT:
 			break;
 		case MsgProtocol.SIGNUP:
+			result=token.nextToken();
+			if(result.equals("OK")){
+				JOptionPane.showMessageDialog(null, "회원가입 성공!");
+				login.closeSignUpUI();
+			}else{
+				JOptionPane.showMessageDialog(null, "회원가입 오류!");
+			}
 			break;
 		case MsgProtocol.ROOMLIST_UPDATE:
 			roomList(token);
