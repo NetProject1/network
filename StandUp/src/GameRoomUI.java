@@ -75,7 +75,7 @@ public class GameRoomUI extends JFrame{
 		button1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e){
-				HandOutCard1();
+				HandOutCard(1,3);
 			}
 		
 		});
@@ -86,7 +86,7 @@ public class GameRoomUI extends JFrame{
 		button2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e){
-				HandOutCard2();
+				HandOutCard(2,3);
 			}
 		
 		});
@@ -97,7 +97,7 @@ public class GameRoomUI extends JFrame{
 		button3.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e){
-				HandOutCard3();
+				HandOutCard(3,3);
 			}
 		
 		});
@@ -108,7 +108,7 @@ public class GameRoomUI extends JFrame{
 		button4.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e){
-				HandOutCard4();
+				HandOutCard(4,3);
 			}
 		
 		});
@@ -123,105 +123,77 @@ public class GameRoomUI extends JFrame{
 		// TODO Auto-generated method stub
 		super.paint(g);
 	}
+	//카드를 나눠주는 애니메이션 재생 (playerNumber 나눠줄 플레이어번호, numcard 몇장 나눠줄지)
+	void HandOutCard(int playerNumber, int numCard){
+		new Thread(){
+			public void run(){
+				
+				int repeat=0;
+				while(true){
+					if(playerNumber==1){
+						cardBackLB1.setLocation(cardBackLB1.getLocation().x+7, cardBackLB1.getLocation().y);
+						if(cardBackLB1.getLocation().x >=600){
+							cardBackLB1.setLocation(325, 290);
+							repeat+=1;
+							if(repeat>=numCard){
+								break;
+							}
+						}
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}else if(playerNumber==2){
+						cardBackLB2.setLocation(cardBackLB2.getLocation().x, (cardBackLB2.getLocation().y)-7);
+						if(cardBackLB2.getLocation().y <=10){
+							cardBackLB2.setLocation(325, 290);
+							repeat+=1;
+							if(repeat>=numCard){
+							break;
+							}
+						}
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}else if(playerNumber==3){
+						cardBackLB3.setLocation(cardBackLB3.getLocation().x-7, cardBackLB3.getLocation().y);
+						if(cardBackLB3.getLocation().x <=10){
+							cardBackLB3.setLocation(325, 290);
+							repeat+=1;
+							if(repeat>=numCard){
+							break;
+							}
+						}
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}else if(playerNumber==4){
+						cardBackLB4.setLocation(cardBackLB4.getLocation().x, (cardBackLB4.getLocation().y)+7);
+						if(cardBackLB4.getLocation().y >=600){
+							cardBackLB4.setLocation(325, 290);
+							repeat+=1;
+							if(repeat>=numCard){
+							break;
+							}
+						}
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}.start();
+	}
 	
-	void HandOutCard1(){
-		
-		new Thread(){
-			public void run(){
-				int repeat=0;
-				while(true){
-					cardBackLB1.setLocation(cardBackLB1.getLocation().x+4, cardBackLB1.getLocation().y);
-					
-					if(cardBackLB1.getLocation().x >=600){
-						cardBackLB1.setLocation(325, 290);
-						repeat+=1;
-						if(repeat>=2){
-						break;
-						}
-					}
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}.start();
-	}
-	void HandOutCard2(){
-		
-		new Thread(){
-			public void run(){
-				int repeat=0;
-				while(true){
-					cardBackLB2.setLocation(cardBackLB2.getLocation().x, (cardBackLB2.getLocation().y)-4);
-					if(cardBackLB2.getLocation().y <=10){
-						cardBackLB2.setLocation(325, 290);
-						repeat+=1;
-						if(repeat>=2){
-						break;
-						}
-					}
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}.start();
-	}
-	
-	void HandOutCard3(){
-		
-		new Thread(){
-			public void run(){
-				int repeat=0;
-				while(true){
-					cardBackLB3.setLocation(cardBackLB3.getLocation().x-4, cardBackLB3.getLocation().y);
-					
-					if(cardBackLB3.getLocation().x <= 100){
-						cardBackLB3.setLocation(325, 290);
-						repeat+=1;
-						if(repeat>=2){
-						break;
-						}
-					}
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}.start();
-	}
-	void HandOutCard4(){
-		
-		new Thread(){
-			public void run(){
-				int repeat=0;
-				while(true){
-					cardBackLB4.setLocation(cardBackLB4.getLocation().x, cardBackLB4.getLocation().y+4);
-					
-					if(cardBackLB4.getLocation().y >=600){
-						cardBackLB4.setLocation(325, 290);
-						repeat+=1;
-						if(repeat>=2){
-						break;
-						}
-					}
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}.start();
-	}
 }

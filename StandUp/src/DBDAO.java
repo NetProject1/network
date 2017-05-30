@@ -44,7 +44,27 @@ public class DBDAO {
 			e.printStackTrace();
 		}
 	}
-	
+	String login(String id, String pw){
+		String result = null;
+		ConnectDB();	
+		try {
+			stmt=conn.createStatement();
+			//쿼리문 실행
+			sql="select * from player where id='" + id + "'";
+			rs=stmt.executeQuery(sql);	
+			if(rs.next()){
+				//id,password,nickname,money,win,lose 순으로 보낸다.
+				result=rs.getString("ID")+"/"+rs.getString("PASSWORD")+"/"+rs.getString("NICKNAME")+"/"+rs.getInt("MONEY")
+				+"/"+rs.getInt("WIN")+"/"+rs.getInt("LOSE");
+			}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+		return result;
+	}
 	//ID, PASSWORD 를 받아와 검색
 	int checkIDPW(String id, String pw){
 		this.id=id;
@@ -122,6 +142,15 @@ public class DBDAO {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	void upadateWIN(String id){
+		
+	}
+	void upadateLose(String id){
+		
+	}
+	void upadateMoney(String id,int value){
+		
 	}
 	
 }

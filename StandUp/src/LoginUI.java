@@ -8,6 +8,7 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 public class LoginUI extends JFrame{
@@ -15,6 +16,7 @@ public class LoginUI extends JFrame{
 	private JTextField idFD;
 	private JPasswordField pwFD;
 	private JTextField ipFD;
+	JLabel ServerAccessLB;
 	
 	//회원가입
 	SignUpUI sign=null;
@@ -103,12 +105,16 @@ public class LoginUI extends JFrame{
 			public void mouseClicked(MouseEvent e){
 				setIpPort();
 			}
-		
+			
 		});
 		
 		JButton signupBTN = new JButton("회원가입");
 		signupBTN.setBounds(293, 170, 97, 23);
 		getContentPane().add(signupBTN);
+		
+		ServerAccessLB = new JLabel("서버 접속 중.... 기다려주세요.");
+		ServerAccessLB.setBounds(146, 25, 268, 15);
+		getContentPane().add(ServerAccessLB);
 		
 		signupBTN.addMouseListener(new MouseAdapter() {
 			@Override
@@ -140,5 +146,8 @@ public class LoginUI extends JFrame{
 		client.IP=ipFD.getText();
 		System.out.println(client.IP+": 서버 IP ");
 		
+	}
+	void serverAccessConfirm(){
+		ServerAccessLB.setText("서버 접속됨.");
 	}
 }

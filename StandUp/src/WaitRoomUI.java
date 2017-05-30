@@ -48,9 +48,11 @@ public class WaitRoomUI extends JFrame{
 	private JLabel lblNewLabel_3;
 	private JLabel lblNewLabel_4;
 	private JLabel nicknameLB;
-	private JLabel lblNewLabel_7;
-	private JLabel lblNewLabel_8;
-	private JLabel lblNewLabel_9;
+	private JLabel userMoney;
+	private JLabel userWin;
+	private JLabel userLose;
+	
+	DefaultTableModel model;
 	/**
 	 * Launch the application.
 	 */
@@ -86,14 +88,13 @@ public class WaitRoomUI extends JFrame{
 		getContentPane().add(roomPN);
 		roomPN.setLayout(new BorderLayout(0, 0));
 		
+		
 		makeRoomBTN = new JButton("방 생성");
 		roomPN.add(makeRoomBTN, BorderLayout.SOUTH);
 		makeRoomBTN.addMouseListener(new MouseAdapter() {
+			//방생성 버튼을 누르면
 			 public void mouseClicked(MouseEvent evt) {
-				 JOptionPane.showInputDialog(null, "방 제목 입력:","방 생성",
-						 JOptionPane.PLAIN_MESSAGE, null,
-						 null, "즐겜 해요");
-			    
+				 makeRoom();
 			 }
 		});
 		
@@ -105,7 +106,7 @@ public class WaitRoomUI extends JFrame{
 		Object rowData[][]={
 		};
 		String rowd[][]={};
-		DefaultTableModel model= new DefaultTableModel(rowd, columNames ){
+		model= new DefaultTableModel(rowd, columNames ){
 			public boolean isCellEditable(int row,int column){
 				return false;
 			}
@@ -115,8 +116,8 @@ public class WaitRoomUI extends JFrame{
 		roomListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		roomListTable.setBorder(new LineBorder(new Color(0, 0, 0)));
 
-		Object[] tempp = {"2","섰다 테스트","방장","이다"}; 
-		model.addRow(tempp);
+	//	Object[] tempp = {"2","섰다 테스트","방장","이다"}; 
+		//model.addRow(tempp);
 		
 		//테이블이 더블클릭 되었을때
 		roomListTable.addMouseListener(new MouseAdapter() {
@@ -163,6 +164,7 @@ public class WaitRoomUI extends JFrame{
 		chatPN.add(scrollPane, BorderLayout.CENTER);
 		
 		chatArea = new JTextArea();
+		chatArea.setLineWrap(true);
 		chatArea.setEditable(false);
 		scrollPane.setViewportView(chatArea);
 		
@@ -216,11 +218,11 @@ public class WaitRoomUI extends JFrame{
 		
 		nicknameLB = new JLabel("별 명");
 		
-		lblNewLabel_7 = new JLabel("00000");
+		userMoney = new JLabel("00000");
 		
-		lblNewLabel_8 = new JLabel("1");
+		userWin = new JLabel("1");
 		
-		lblNewLabel_9 = new JLabel("1");
+		userLose = new JLabel("1");
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
@@ -232,15 +234,15 @@ public class WaitRoomUI extends JFrame{
 								.addGroup(gl_panel.createSequentialGroup()
 									.addComponent(lblNewLabel_4)
 									.addGap(18)
-									.addComponent(lblNewLabel_9))
+									.addComponent(userLose))
 								.addGroup(gl_panel.createSequentialGroup()
 									.addComponent(lblNewLabel_3)
 									.addGap(18)
-									.addComponent(lblNewLabel_8))
+									.addComponent(userWin))
 								.addGroup(gl_panel.createSequentialGroup()
 									.addComponent(lblNewLabel_2)
 									.addGap(18)
-									.addComponent(lblNewLabel_7))))
+									.addComponent(userMoney))))
 						.addGroup(gl_panel.createSequentialGroup()
 							.addGap(73)
 							.addComponent(nicknameLB)))
@@ -254,17 +256,18 @@ public class WaitRoomUI extends JFrame{
 					.addGap(28)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblNewLabel_2)
-						.addComponent(lblNewLabel_7))
+						.addComponent(userMoney))
 					.addGap(18)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblNewLabel_3)
-						.addComponent(lblNewLabel_8))
+						.addComponent(userWin))
 					.addGap(18)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblNewLabel_4)
-						.addComponent(lblNewLabel_9))
+						.addComponent(userLose))
 					.addContainerGap(109, Short.MAX_VALUE))
 		);
+		setUserInfo();
 		panel.setLayout(gl_panel);
 		
 		setVisible(true);
@@ -284,10 +287,21 @@ public class WaitRoomUI extends JFrame{
 	}
 	void makeRoom(){
 		try {
-			client.dos.writeUTF(MsgProtocol.WAITROOM_CHAT+"/"+chatInputFD.getText());
+			//알림창을 띄워 방제목을 입력받는다.
+			String str=(String)JOptionPane.showInputDialog(null, "방 제목 입력:","방 생성",
+					 JOptionPane.PLAIN_MESSAGE, null,
+					 null, "즐겜 해요");
+			
+			client.dos.writeUTF(MsgProtocol.MAKEROOM+"/"+str);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	void setUserInfo(){
+		nicknameLB.setText(client.user.nickName);
+		userMoney.setText(Integer.toString(client.user.money));
+		userWin.setText(Integer.toString(client.user.win));
+		userLose.setText(Integer.toString(client.user.lose));
 	}
 }

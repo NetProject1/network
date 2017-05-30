@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
 public class Client implements Runnable {
 	static int PORT=7777; //서버 포트
-	static String IP="111.111.111.11"; //서버 아이피
+	static String IP="111.111.111.111"; //서버 아이피
 	
 	Socket socket; //서버와 접속할 소켓
 	DataInputStream dis; // 입출력 스트림
@@ -41,7 +42,7 @@ public class Client implements Runnable {
 	@Override
 	public void run() {
 		serverAccess();
-		
+		login.serverAccessConfirm();
 		//계속해서 서버로부터 메세지를 전달받아 해석한다
 		while(true){
 			try {
@@ -84,14 +85,13 @@ public class Client implements Runnable {
 		case MsgProtocol.LOGIN:
 			result=token.nextToken();
 				if(result.equals("OK")){
-					user=new User();
 					user.id=token.nextToken();
 					user.pw=token.nextToken();
 					user.nickName=token.nextToken();
-					user.Money=Integer.parseInt(token.nextToken());
+					user.money=Integer.parseInt(token.nextToken());
 					user.win=Integer.parseInt(token.nextToken());
 					user.lose=Integer.parseInt(token.nextToken());
-					
+					user.isLogin=true;
 					login();
 				}else{
 					JOptionPane.showMessageDialog(null, "로그인 실패: 아이디 비밀번호를 확인해주세요.");
@@ -100,6 +100,16 @@ public class Client implements Runnable {
 		case MsgProtocol.LOGOUT:
 			break;
 		case MsgProtocol.SIGNUP:
+			break;
+		case MsgProtocol.ROOMLIST_UPDATE:
+			roomList(token);
+			break;
+		case MsgProtocol.WAITROOM_CHAT:
+			result=token.nextToken()+"\n";
+			chatRecieve(result);
+			break;
+		case MsgProtocol.USERLIST_UPDATE:
+			userList(token);
 			break;
 		}
 		//로그인시
@@ -129,6 +139,7 @@ public class Client implements Runnable {
 					 try {
 						 dis=new DataInputStream(socket.getInputStream());
 						 dos=new DataOutputStream(socket.getOutputStream());
+						 user= new User(dis, dos);
 					 } catch (IOException e) {
 						 // TODO Auto-generated catch block
 						 e.printStackTrace();
@@ -137,7 +148,7 @@ public class Client implements Runnable {
 				 }else{
 					 try {
 						 JOptionPane.showMessageDialog(null, "서버 접속 오류...");
-						 Thread.sleep(500);
+						 Thread.sleep(200);
 					 } catch (InterruptedException e) {
 						 // TODO Auto-generated catch block
 						 e.printStackTrace();
@@ -146,7 +157,7 @@ public class Client implements Runnable {
 			 }else{
 				 try {
 					 JOptionPane.showMessageDialog(null, "서버 접속 오류...");
-					 Thread.sleep(500);
+					 Thread.sleep(200);
 				 } catch (InterruptedException e) {
 					 // TODO Auto-generated catch block
 					 e.printStackTrace();
@@ -157,14 +168,46 @@ public class Client implements Runnable {
 	 }
 	//로그인시 로그인 정보를 받아옴. 로그인ui 를 닫고 대기실 ui를 띄움
 	  void login(){
-
 		  waitRoom =new WaitRoomUI(this);
 		  login.dispose();
 		 
 	 }
 	 //로그 아웃시 모든창을 닫고 소켓 반환
-	 private void logout(){
+	  void logout(){
 		 
 	 }
-
+	synchronized void roomList(StringTokenizer token){
+		 String rNum, rName, rMaster,rUsers;
+		 if(waitRoom.model!=null){
+			 //테이블 모델을 비운다.
+			 waitRoom.model.setRowCount(0);
+		 }
+		 
+		 while(token.hasMoreTokens()){
+			 rNum=token.nextToken();
+			 rName=token.nextToken();
+			 rMaster=token.nextToken();
+			 rUsers=token.nextToken();
+			 String[] rowData={rNum,rName,rMaster,rUsers};
+			 waitRoom.model.addRow(rowData);
+			 System.out.println(waitRoom.model.getRowCount());
+		 }
+		 
+	 }
+	synchronized void userList(StringTokenizer token){
+		if(waitRoom.connectUserList!=null){
+			waitRoom.connectUserList.removeAll();
+		}
+		Vector vec=new Vector();
+		String str;
+		while(token.hasMoreTokens()){
+			str=token.nextToken();
+			vec.addElement(str);
+		}
+		waitRoom.connectUserList.setListData(vec);
+	}
+	void chatRecieve(String str){
+		waitRoom.chatArea.append(str);
+		waitRoom.chatArea.setCaretPosition(waitRoom.chatArea.getDocument().getLength());
+	}
 }

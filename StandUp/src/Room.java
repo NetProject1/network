@@ -6,4 +6,13 @@ public class Room {
 	ArrayList<User> userArray;
 	User roomMaster;
 	
+	public Room(int rNum,String rName, User roomMaster) {
+		// TODO Auto-generated constructor stub
+		this.roomNumber=rNum;
+		this.roomName=rName;
+		this.roomMaster=roomMaster;
+		userArray=new ArrayList<User>();
+		userArray.add(roomMaster);
+	}
+	
 }
