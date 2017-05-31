@@ -5,7 +5,7 @@ public class Room {
 	String roomName;
 	ArrayList<User> userArray;
 	User roomMaster;
-	
+	boolean isGameStart=false;
 	public Room(int rNum,String rName, User roomMaster) {
 		// TODO Auto-generated constructor stub
 		this.roomNumber=rNum;
@@ -14,5 +14,17 @@ public class Room {
 		userArray=new ArrayList<User>();
 		userArray.add(roomMaster);
 	}
-	
+	//방장을 넘긴다.
+	int passMaster(){
+		if(userArray.size()<=1){
+			//방에 오직 방장 한명뿐이라면 0을 리턴
+			return 0;
+		}else{
+			//방에 2명이상이면 다음 유저에게 방장을 넘긴다.
+			roomMaster=userArray.get(1);
+			return 1;
+		}
+		
+		
+	}
 }

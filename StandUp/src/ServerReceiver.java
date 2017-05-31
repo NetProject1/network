@@ -20,7 +20,7 @@ public class ServerReceiver extends Thread {
 		this.userArray=userArray;
 		this.roomArray=roomArray;
 		this.user=user;
-		userArray.add(user);
+		//userArray.add(user);
 	}
 	public void run() {
 		try {
@@ -33,6 +33,31 @@ public class ServerReceiver extends Thread {
 			// ignore
 		} finally {
 			try {
+				//유저 종료시, 유저 목록과 유저가 들어있던 방에서 유저를 제거해야함.
+				//방목록에서 유저가 속해있던 방 수정.
+				//유저가 종료했을때 유저가 로그인상태였다면
+				if(user.isLogin){
+					if(user.room!=null){
+						//유저가 방에 들어가있었다면
+						//게임중이였다면
+						//if(user.room.isGameStart)
+						if(user.room.roomMaster.equals(user)){
+							if(user.room.passMaster()==1){
+								user.room.userArray.remove(user);
+							}else{
+								roomArray.remove(user.room);								
+							}
+						}else{
+							user.room.userArray.remove(user);
+						}
+					}
+				
+					userArray.remove(user);
+					user.isLogin=false;
+					userList();
+					roomList();
+				}
+				
 				user.dis.close();
 				user.dos.close();
 				socket.close();
@@ -58,7 +83,15 @@ public class ServerReceiver extends Thread {
 		case MsgProtocol.LOGIN:
 			id=token.nextToken();
 			pw=token.nextToken();
-			if(dbdao.checkIDPW(id, pw)!=1){
+			boolean isExistUSER=false;
+			for(int i=0;i< userArray.size(); i++){
+				if(userArray.get(i).id.equals(id)){					
+					isExistUSER=true;
+				}
+			}
+
+			//아이디 패스워드가 일치하면
+			if(dbdao.checkIDPW(id, pw)!=1 && !isExistUSER){
 				result=dbdao.login(id, pw);
 				user.dos.writeUTF(MsgProtocol.LOGIN+"/OK/"+result);
 				token=new StringTokenizer(result,"/");
@@ -69,9 +102,15 @@ public class ServerReceiver extends Thread {
 				user.win=Integer.parseInt(token.nextToken());
 				user.lose=Integer.parseInt(token.nextToken());
 				user.isLogin=true;
+				userArray.add(user);
 				userList();
+				roomList();
 			}else{
-				user.dos.writeUTF(MsgProtocol.LOGIN+"/Fail");		
+				if( !isExistUSER){
+				user.dos.writeUTF(MsgProtocol.LOGIN+"/Fail");
+				}else{
+				user.dos.writeUTF(MsgProtocol.LOGIN+"/CONN");
+				}
 			}
 			break;
 		case MsgProtocol.LOGOUT:
@@ -102,7 +141,29 @@ public class ServerReceiver extends Thread {
 			result=MsgProtocol.WAITROOM_CHAT+"/"+user.nickName+": "+token.nextToken();
 			loginEchoMsg(result);
 			break;
-
+		case MsgProtocol.ENTERROOM:
+			rNum=token.nextToken();
+			//EnterRoom(rNum);
+			break;
+		case MsgProtocol.EXITROOM:
+			if(user.room.isGameStart){
+				user.dos.writeUTF(MsgProtocol.EXITROOM+"/FAIL");
+			}else{
+				if(user.room.roomMaster.equals(user)){
+					if(user.room.passMaster()==1){
+						user.room.userArray.remove(user);
+					}else{
+						roomArray.remove(user.room);								
+					}
+				}else{
+					user.room.userArray.remove(user);
+				}
+				user.dos.writeUTF(MsgProtocol.EXITROOM+"/OK");
+				user.room=null;
+				userList();
+				roomList();
+			}
+			break;
 			}
 		 }catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -126,11 +187,42 @@ public class ServerReceiver extends Thread {
 		rnum+=1;
 		Room newRoom=new Room(rnum,rName,user);
 		roomArray.add(newRoom);
-		System.out.println("방만들었다");
+		user.room=newRoom;
 		roomList();
-		
+		//방 만들어졌으니 클라이언트쪽에서 게임방 ui 띄우도록 정보를 보내줌
+		try {
+			user.dos.writeUTF(MsgProtocol.MAKEROOM+"/OK/"+rnum+"/"+rName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
+	/*
+	void EnterRoom(String rNum){
+		Room enterRoom=null;
+		int num=Integer.parseInt(rNum);
+		for(int i=0; i <roomArray.size() ;i++){
+			if(roomArray.get(i).roomNumber==num){
+				enterRoom=roomArray.get(i);
+			}
+		}
+		if(enterRoom!=null){
+			if(enterRoom.userArray.size()<4){
+				//방에 입장하기위한 조건. 3인이하 일것.
+				user.room=enterRoom;
+				enterRoom.userArray.add(user);
+				//방에 입장 성공적.
+				try {
+					user.dos.writeUTF(MsgProtocol.ENTERROOM+"/OK"+"");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	*/
 	//로그인한 유저들에게 메세지전달 
 	void loginEchoMsg(String msg){
 		for(int i=0; i <userArray.size() ;i++){

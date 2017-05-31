@@ -8,4 +8,6 @@ public class MsgProtocol {
 	public static final String MAKEROOM="MR";
 	public static final String ROOMLIST_UPDATE="RLUP";
 	public static final String USERLIST_UPDATE="ULUP";
+	public static final String ENTERROOM="ER";
+	public static final String EXITROOM="EXR";
 }

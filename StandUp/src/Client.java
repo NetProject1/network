@@ -20,7 +20,7 @@ public class Client implements Runnable {
 	//UI 구현시 
 	LoginUI login;
 	WaitRoomUI waitRoom;
-	//gameroom
+	GameRoomUI gameroom;
 	
 	//유저 정보 
 	User user;
@@ -41,8 +41,19 @@ public class Client implements Runnable {
 	
 	@Override
 	public void run() {
-		serverAccess();
-		login.serverAccessConfirm();
+	//	serverAccess();
+	//	login.serverAccessConfirm();
+		
+		while(!accessReady){
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
 		//계속해서 서버로부터 메세지를 전달받아 해석한다
 		while(true){
 			try {
@@ -94,7 +105,11 @@ public class Client implements Runnable {
 					user.isLogin=true;
 					login();
 				}else{
-					JOptionPane.showMessageDialog(null, "로그인 실패: 아이디 비밀번호를 확인해주세요.");
+					if(result.equals("CONN")){
+						JOptionPane.showMessageDialog(null, "로그인 실패: 이미 접속중입니다.");
+					}else{
+						JOptionPane.showMessageDialog(null, "로그인 실패: 아이디 비밀번호를 확인해주세요.");
+					}
 				}
 			break;
 		case MsgProtocol.LOGOUT:
@@ -118,6 +133,28 @@ public class Client implements Runnable {
 		case MsgProtocol.USERLIST_UPDATE:
 			userList(token);
 			break;
+		case MsgProtocol.MAKEROOM:
+			result=token.nextToken();
+			if(result.equals("OK")){
+				rNum=token.nextToken();
+				rName=token.nextToken();
+				Room newroom=new Room(Integer.parseInt(rNum),
+						rName, user);
+				user.room=newroom;
+				gameroom=new GameRoomUI(this);
+				waitRoom.dispose();
+			}
+			break;
+		case MsgProtocol.ENTERROOM:
+			break;
+		case MsgProtocol.EXITROOM:
+			result=token.nextToken();
+			if(result.equals("OK")){
+				user.room=null;
+				waitRoom=new WaitRoomUI(this);
+				gameroom.dispose();
+			}
+			break;
 		}
 		//로그인시
 		 	//성공
@@ -130,9 +167,9 @@ public class Client implements Runnable {
 	 void uiTerminated(){
 		 
 	 }
-	 //서버 접속될때까지 기다리면서 계속 접속 수행.
+	 //서버 접속
 	 void serverAccess(){
-		 while(!accessReady){
+		// while(!accessReady){
 			 try {
 				 socket= new Socket(IP, PORT);
 			 } catch (UnknownHostException e) {
@@ -151,10 +188,12 @@ public class Client implements Runnable {
 						 // TODO Auto-generated catch block
 						 e.printStackTrace();
 					 }
+					 login.serverAccessConfirm();
 					 accessReady=true;
 				 }else{
 					 try {
 						 JOptionPane.showMessageDialog(null, "서버 접속 오류...");
+						 login.serverAccessFailed();
 						 Thread.sleep(200);
 					 } catch (InterruptedException e) {
 						 // TODO Auto-generated catch block
@@ -164,13 +203,14 @@ public class Client implements Runnable {
 			 }else{
 				 try {
 					 JOptionPane.showMessageDialog(null, "서버 접속 오류...");
+					 login.serverAccessFailed();
 					 Thread.sleep(200);
 				 } catch (InterruptedException e) {
 					 // TODO Auto-generated catch block
 					 e.printStackTrace();
 				 }
 			 }
-		 }
+	//	 }
 		 
 	 }
 	//로그인시 로그인 정보를 받아옴. 로그인ui 를 닫고 대기실 ui를 띄움
@@ -183,6 +223,18 @@ public class Client implements Runnable {
 	  void logout(){
 		 
 	 }
+	  void EnterRoom(){
+		  
+	  }
+	  void ExitRoom(){
+		  //게임중이 아닐때
+		  try {
+			user.dos.writeUTF(MsgProtocol.EXITROOM);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	  }
 	synchronized void roomList(StringTokenizer token){
 		 String rNum, rName, rMaster,rUsers;
 		 if(waitRoom.model!=null){
@@ -216,5 +268,9 @@ public class Client implements Runnable {
 	void chatRecieve(String str){
 		waitRoom.chatArea.append(str);
 		waitRoom.chatArea.setCaretPosition(waitRoom.chatArea.getDocument().getLength());
+	}
+	
+	public void changeIP(){
+		serverAccess();
 	}
 }

@@ -94,7 +94,7 @@ public class LoginUI extends JFrame{
 		//처음시작시 정해져있는 ip를 보여줌
 		ipFD.setText(client.IP);
 		
-		JButton serverBTN = new JButton("서버 ip 변경");
+		JButton serverBTN = new JButton("서버 접속");
 		serverBTN.setBounds(293, 84, 142, 23);
 		getContentPane().add(serverBTN);
 		
@@ -112,7 +112,7 @@ public class LoginUI extends JFrame{
 		signupBTN.setBounds(293, 170, 97, 23);
 		getContentPane().add(signupBTN);
 		
-		ServerAccessLB = new JLabel("서버 접속 중.... 기다려주세요.");
+		ServerAccessLB = new JLabel("서버에 접속하지 않았습니다.");
 		ServerAccessLB.setBounds(146, 25, 268, 15);
 		getContentPane().add(ServerAccessLB);
 		
@@ -145,10 +145,13 @@ public class LoginUI extends JFrame{
 	void setIpPort(){
 		client.IP=ipFD.getText();
 		System.out.println(client.IP+": 서버 IP ");
-		
+		client.changeIP();
 	}
 	void serverAccessConfirm(){
-		ServerAccessLB.setText("서버 접속됨.");
+		ServerAccessLB.setText("서버에 접속했습니다.");
+	}
+	void serverAccessFailed(){
+		ServerAccessLB.setText("서버에 접속하지 않았습니다.");
 	}
 	void closeSignUpUI(){
 		if(sign!=null){

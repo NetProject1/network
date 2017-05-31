@@ -116,9 +116,7 @@ public class WaitRoomUI extends JFrame{
 		roomListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		roomListTable.setBorder(new LineBorder(new Color(0, 0, 0)));
 
-	//	Object[] tempp = {"2","섰다 테스트","방장","이다"}; 
-		//model.addRow(tempp);
-		
+
 		//테이블이 더블클릭 되었을때
 		roomListTable.addMouseListener(new MouseAdapter() {
 			 public void mouseClicked(MouseEvent evt) {
@@ -290,7 +288,7 @@ public class WaitRoomUI extends JFrame{
 			//알림창을 띄워 방제목을 입력받는다.
 			String str=(String)JOptionPane.showInputDialog(null, "방 제목 입력:","방 생성",
 					 JOptionPane.PLAIN_MESSAGE, null,
-					 null, "즐겜 해요");
+					 null, "왜 이렇게 혓바닥이 길어?");
 			
 			client.dos.writeUTF(MsgProtocol.MAKEROOM+"/"+str);
 		} catch (IOException e) {
