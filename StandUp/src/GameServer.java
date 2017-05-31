@@ -152,37 +152,37 @@ public class GameServer {
 		priority[4][16] = priority[4][16] + 600;
 		priority[14][16] = priority[14][16] + 600;
 		//갑오
-		priority[1][9] = priority[1][9]+550;
-		priority[1][19] = priority[1][19]+550;
-		priority[10][9] = priority[10][9]+550;
-		priority[10][19] = priority[10][19]+550;
-		priority[2][7] = priority[2][7]+550;
-		priority[2][17] = priority[2][17]+550;
-		priority[12][7] = priority[12][7]+550;
-		priority[12][17] = priority[12][17]+550;
-		priority[3][6] = priority[3][6]+550;
-		priority[3][16] = priority[3][16]+550;
-		priority[13][6] = priority[13][6]+550;
-		priority[13][16] = priority[13][16]+550;
-		priority[3][6] = priority[3][6]+550;
-		priority[4][15] = priority[4][15]+550;
-		priority[13][6] = priority[13][6]+550;
-		priority[13][16] = priority[13][16]+550;
+		priority[1][9] = priority[1][9]+500;
+		priority[1][19] = priority[1][19]+500;
+		priority[10][9] = priority[10][9]+500;
+		priority[10][19] = priority[10][19]+500;
+		priority[2][7] = priority[2][7]+500;
+		priority[2][17] = priority[2][17]+500;
+		priority[12][7] = priority[12][7]+500;
+		priority[12][17] = priority[12][17]+500;
+		priority[3][6] = priority[3][6]+500;
+		priority[3][16] = priority[3][16]+500;
+		priority[13][6] = priority[13][6]+500;
+		priority[13][16] = priority[13][16]+500;
+		priority[3][6] = priority[3][6]+500;
+		priority[4][15] = priority[4][15]+500;
+		priority[13][6] = priority[13][6]+500;
+		priority[13][16] = priority[13][16]+500;
 		//3,7땡잡이
-		priority[3][17] = priority[3][17] + 500;
-		priority[3][7] = priority[3][7] + 500;
-		priority[7][13] = priority[7][13] + 500;
-		priority[13][17] = priority[13][17] + 500;
+		priority[3][17] = priority[3][17] + 400;
+		priority[3][7] = priority[3][7] + 400;
+		priority[7][13] = priority[7][13] + 400;
+		priority[13][17] = priority[13][17] + 400;
 		// 암행어사
-		priority[4][17] = priority[4][17] + 400;
-		priority[4][7] = priority[4][7] + 400;
-		priority[7][14] = priority[7][14] + 400;
-		priority[14][17] = priority[14][17] + 400;
+		priority[4][17] = priority[4][17] + 300;
+		priority[4][7] = priority[4][7] + 300;
+		priority[7][14] = priority[7][14] + 300;
+		priority[14][17] = priority[14][17] + 300;
 		// 구사
-		priority[4][19] = priority[4][19] + 300;
-		priority[4][9] = priority[4][9] + 300;
-		priority[9][14] = priority[9][14] + 300;
-		priority[14][19] = priority[14][19] + 300;
+		priority[4][19] = priority[4][19] + 200;
+		priority[4][9] = priority[4][9] + 200;
+		priority[9][14] = priority[9][14] + 200;
+		priority[14][19] = priority[14][19] + 200;
 		
 //		for(int i =0; i<10;i++){
 //			for(int j =11; j<=20;j++){
@@ -219,21 +219,10 @@ public class GameServer {
 		}
 		for(int i = 0; i<player.length; i++){
 			
-			if(player[i]>=500 && player[i] <600){
+			if(player[i]>=400 && player[i] <500){
 				for(int j = 0; j<player.length; j++){
 					if(player[j] >= 1000 && player[j] <3000){
 						player[i] = player[i] + 3000;
-					}
-				}
-				if(player[i]>=500 && player[i] <600){
-					player[i] = player[i] - 500;
-				}
-			}
-			
-			if(player[i]>=400 && player[i] <500){
-				for(int j = 0; j<player.length; j++){
-					if(player[j] == 10000){
-						player[i] = player[i] + 10100;
 					}
 				}
 				if(player[i]>=400 && player[i] <500){
@@ -241,8 +230,19 @@ public class GameServer {
 				}
 			}
 			
-			// 여기선 재경기
 			if(player[i]>=300 && player[i] <400){
+				for(int j = 0; j<player.length; j++){
+					if(player[j] == 10000){
+						player[i] = player[i] + 10100;
+					}
+				}
+				if(player[i]>=300 && player[i] <400){
+					player[i] = player[i] - 300;
+				}
+			}
+			
+			// 여기선 재경기
+			if(player[i]>=200 && player[i] <300){
 				
 			}
 			if(max < player[i]){
