@@ -143,7 +143,7 @@ public class ServerReceiver extends Thread {
 			break;
 		case MsgProtocol.ENTERROOM:
 			rNum=token.nextToken();
-			//EnterRoom(rNum);
+			EnterRoom(rNum);
 			break;
 		case MsgProtocol.EXITROOM:
 			if(user.room.isGameStart){
@@ -198,31 +198,41 @@ public class ServerReceiver extends Thread {
 		}
 		
 	}
-	/*
+	
 	void EnterRoom(String rNum){
-		Room enterRoom=null;
-		int num=Integer.parseInt(rNum);
-		for(int i=0; i <roomArray.size() ;i++){
-			if(roomArray.get(i).roomNumber==num){
-				enterRoom=roomArray.get(i);
-			}
-		}
-		if(enterRoom!=null){
-			if(enterRoom.userArray.size()<4){
-				//방에 입장하기위한 조건. 3인이하 일것.
-				user.room=enterRoom;
-				enterRoom.userArray.add(user);
-				//방에 입장 성공적.
-				try {
-					user.dos.writeUTF(MsgProtocol.ENTERROOM+"/OK"+"");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		try{
+			Room enterRoom=null;
+			int num=Integer.parseInt(rNum);
+			for(int i=0; i <roomArray.size() ;i++){
+				if(roomArray.get(i).roomNumber==num){
+					enterRoom=roomArray.get(i);
 				}
 			}
+			if(enterRoom!=null){
+				if(!enterRoom.isGameStart){
+					if(enterRoom.userArray.size()<4){
+						//방에 입장하기위한 조건. 3인이하 일것.
+						user.room=enterRoom;
+						enterRoom.userArray.add(user);
+						//방에 입장 성공적.
+						//방 정보를 전달
+						//같은 방인 놈들 전원 방정보 갱신해야함.
+						user.dos.writeUTF(MsgProtocol.ENTERROOM+"/OK/"+user.room.roomNumber
+								+"/"+user.room.roomName);
+						roomUpdate();
+					}else{
+						user.dos.writeUTF(MsgProtocol.ENTERROOM+"/FAIL/방이 꽉 찼습니다.");
+					}
+				}else{
+					user.dos.writeUTF(MsgProtocol.ENTERROOM+"/FAIL/게임 중입니다.");
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-	*/
+	
 	//로그인한 유저들에게 메세지전달 
 	void loginEchoMsg(String msg){
 		for(int i=0; i <userArray.size() ;i++){
@@ -256,5 +266,19 @@ public class ServerReceiver extends Thread {
 		String msg=MsgProtocol.USERLIST_UPDATE+str;
 		loginEchoMsg(msg);
 	}
-	
+	//현재 접속중인 방의 정보를 같은 방의 모든 클라이언트에게 업데이트함.
+	void roomUpdate(){
+		if(user.room!=null){
+			String str=MsgProtocol.ROOM_UPDATE;
+			user.room.GetRoomINFO();
+			for(int i=0; i <user.room.userArray.size() ;i++){
+				try {
+					userArray.get(i).dos.writeUTF(str);
+				} catch (IOException e) {
+				// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }

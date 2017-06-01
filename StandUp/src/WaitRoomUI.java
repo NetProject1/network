@@ -121,8 +121,7 @@ public class WaitRoomUI extends JFrame{
 		roomListTable.addMouseListener(new MouseAdapter() {
 			 public void mouseClicked(MouseEvent evt) {
 				 if(evt.getClickCount()==2){
-				 System.out.println("오잉"+
-			 roomListTable.getValueAt( roomListTable.getSelectedRow() , 0 ).toString());
+					 client.EnterRoom( roomListTable.getValueAt( roomListTable.getSelectedRow() , 0 ).toString());
 			    }
 			 }
 		});
@@ -187,10 +186,7 @@ public class WaitRoomUI extends JFrame{
 		connectUserList.addMouseListener(new MouseAdapter() {
 			 public void mouseClicked(MouseEvent evt) {
 				 if(evt.getClickCount()==2){
-					 /*
-					 chatInputFD.setText("/w "+connectUserList.getSelectedValue()
-					 +" "+chatInputFD.getText());
-					 */
+				
 				 }
 			 }
 		});

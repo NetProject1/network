@@ -27,4 +27,18 @@ public class Room {
 		
 		
 	}
+	String GetRoomINFO(){
+		String str="";
+		if(isGameStart){
+			str+="/true";
+		}else{
+			str+="/false";
+		}
+		str+=roomMaster.getUserINFO();
+		for(int i=0;i<userArray.size();i++){
+			str+=userArray.get(i).getUserINFO();
+		}
+		
+		return str;
+	}
 }

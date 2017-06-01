@@ -146,6 +146,19 @@ public class Client implements Runnable {
 			}
 			break;
 		case MsgProtocol.ENTERROOM:
+			result=token.nextToken();
+			if(result.equals("OK")){
+				rNum=token.nextToken();
+				rName=token.nextToken();
+				
+				user.room=new Room(Integer.parseInt(rNum),rName,new User());
+				gameroom=new GameRoomUI(this);
+				waitRoom.dispose();
+				
+			}else{
+				result=token.nextToken();
+				 JOptionPane.showMessageDialog(null, result);
+			}
 			break;
 		case MsgProtocol.EXITROOM:
 			result=token.nextToken();
@@ -154,6 +167,9 @@ public class Client implements Runnable {
 				waitRoom=new WaitRoomUI(this);
 				gameroom.dispose();
 			}
+			break;
+		case MsgProtocol.ROOM_UPDATE:
+			roomUpdate(token);
 			break;
 		}
 		//로그인시
@@ -223,8 +239,14 @@ public class Client implements Runnable {
 	  void logout(){
 		 
 	 }
-	  void EnterRoom(){
-		  
+	  void EnterRoom(String str){
+		  try {
+			  //방번호와 프로토콜을 서버에 보냄.
+			user.dos.writeUTF(MsgProtocol.ENTERROOM+"/"+str);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	  }
 	  void ExitRoom(){
 		  //게임중이 아닐때
@@ -269,8 +291,47 @@ public class Client implements Runnable {
 		waitRoom.chatArea.append(str);
 		waitRoom.chatArea.setCaretPosition(waitRoom.chatArea.getDocument().getLength());
 	}
-	
+	//게임 시작여부 룸마스터 정보 유저정보순으로 받아온다
+	void roomUpdate(StringTokenizer token){
+		String isGameStart=token.nextToken();
+		if(isGameStart.equals("true")){
+			user.room.isGameStart=true;
+		}else{
+			user.room.isGameStart=false;
+		}
+		User newuser;
+		String id=token.nextToken();
+		String nick=token.nextToken();
+		int money=Integer.parseInt(token.nextToken());
+		int win=Integer.parseInt(token.nextToken());
+		int lose=Integer.parseInt(token.nextToken());
+		if(id.equals(user.id)){
+			user.room.roomMaster=user;
+		}else{
+			newuser=new User(id, nick, money, win, lose);
+			user.room.roomMaster=newuser;
+		}
+		
+		user.room.userArray.clear();
+		while(token.hasMoreTokens()){
+			 id=token.nextToken();
+			 nick=token.nextToken();
+			 money=Integer.parseInt(token.nextToken());
+			 win=Integer.parseInt(token.nextToken());
+			 lose=Integer.parseInt(token.nextToken());
+			 if(id.equals(user.id)){
+					user.room.userArray.add(user);
+				}else{
+					 newuser=new User(id, nick, money, win, lose);
+					 user.room.userArray.add(newuser);
+				}
+			
+		}
+		
+		
+	}
 	public void changeIP(){
 		serverAccess();
 	}
+	
 }
