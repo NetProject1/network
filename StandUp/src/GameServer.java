@@ -1,5 +1,3 @@
-package Server;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import Model.CODE_KEY;
-import Server.GameServer.GameServerReceiver;
+import CODE_KEY;
+import GameServer.GameServerReceiver;
 
 class Player {
 	public Player() {
