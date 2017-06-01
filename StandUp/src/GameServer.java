@@ -1,3 +1,5 @@
+package Server;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -7,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import CODE_KEY;
-import GameServer.GameServerReceiver;
+import Model.CODE_KEY;
+import Server.GameServer.GameServerReceiver;
 
 class Player {
 	public Player() {
@@ -92,16 +94,43 @@ public class GameServer {
 		}
 	}
 	
-	// 이거 수정해야되요!
-// 	public Player getOtherPlayer(String player) {
-// 		if (player.equals("0")) {
-// 			return player1;
-// 		} else {
-// 			return player0;
-// 		}
-// 	}
+ 	public Player getFirstPlayer(String player) {
+ 		if (player.equals("0")) {
+ 			return player1;
+ 		} else if(player.equals("1")){
+ 			return player0;
+ 		} else if(player.equals("2")){
+ 			return player0;
+ 		} else{
+ 			return player0;
+ 		}
+ 	}
+ 	
+ 	public Player getSecondPlayer(String player){
+ 		if(player.equals("0")){
+ 			return player2;
+ 		} else if(player.equals("1")){
+ 			return player2;
+ 		} else if(player.equals("2")){
+ 			return player1;
+ 		} else{
+ 			return player1;
+ 		}
+ 	}
+ 	
+ 	public Player getThirdPlayer(String player){
+ 		if(player.equals("0")){
+ 			return player3;
+ 		} else if(player.equals("1")){
+ 			return player3;
+ 		} else if(player.equals("2")){
+ 			return player3;
+ 		} else{
+ 			return player2;
+ 		}
+ 	}
 	
-        // player card를 생성하고 족보에따라 winner를 결정(using judge method)
+ 	  // player card를 생성하고 족보에따라 winner를 결정(using judge method)
 	public void dealCard() {
 		int[] card = new int[21];
 		Random random = new Random(System.currentTimeMillis());
@@ -119,7 +148,7 @@ public class GameServer {
 	public void setPriority() {
 		priority[13][18] = Integer.MAX_VALUE; //38광땡
 		priority[11][13] = 10000; //13광땡
-		priority[11][18] = 10000; //18
+		priority[11][18] = 10000; //18광땡
 
 		for (int i = 1; i <= 10; i++) {
 			for (int j = 11; j <= 20; j++) {
@@ -131,7 +160,7 @@ public class GameServer {
 			}
 		}
 		priority[10][20] = priority[10][20]+1100;
-		//알리 1,2
+		//알리1,2
 		priority[1][12] = priority[1][12] + 900;
 		priority[1][2] = priority[1][2] + 900;
 		priority[2][11] = priority[2][11] + 900;
@@ -173,12 +202,12 @@ public class GameServer {
 		priority[3][7] = priority[3][7] + 400;
 		priority[7][13] = priority[7][13] + 400;
 		priority[13][17] = priority[13][17] + 400;
-		// 암행어사
+		//암행어사
 		priority[4][17] = priority[4][17] + 300;
 		priority[4][7] = priority[4][7] + 300;
 		priority[7][14] = priority[7][14] + 300;
 		priority[14][17] = priority[14][17] + 300;
-		// 구사
+		//구사
 		priority[4][19] = priority[4][19] + 200;
 		priority[4][9] = priority[4][9] + 200;
 		priority[9][14] = priority[9][14] + 200;
@@ -241,7 +270,7 @@ public class GameServer {
 				}
 			}
 			
-			// 여기선 재경기
+			// 구사
 			if(player[i]>=200 && player[i] <300){
 				
 			}
@@ -308,19 +337,28 @@ public class GameServer {
 					if (str[0].equals(CODE_KEY.CODE_GAMESTART)) {
 						Player p = getMyPlayer(player+"");
 						p.money = Integer.parseInt(str[2]);
-						if (getOtherPlayer(str[1]).state.equals(CODE_KEY.CODE_GAMESTART)) {
+						if (getFirstPlayer(str[1]).state.equals(CODE_KEY.CODE_GAMESTART) && getSecondPlayer(str[1]).state.equals(CODE_KEY.CODE_GAMESTART)
+								&& getThirdPlayer(str[1]).state.equals(CODE_KEY.CODE_GAMESTART)) {
 							System.out.println("player"+player+"My money:"+p.money);
-							allGameMoney = 200;
+							allGameMoney = 400;
 							p.state = "";
 							dealCard();
 							p.card1 = shuffleCard.get(0);
 							p.card2 = shuffleCard.get(1);
-							getOtherPlayer(str[1]).card1 = shuffleCard.get(2);
-							getOtherPlayer(str[1]).card2 = shuffleCard.get(3);
+							getFirstPlayer(str[1]).card1 = shuffleCard.get(2);
+							getFirstPlayer(str[1]).card2 = shuffleCard.get(3);
+							getSecondPlayer(str[1]).card1 = shuffleCard.get(4);
+							getSecondPlayer(str[1]).card2 = shuffleCard.get(5);
+							getThirdPlayer(str[1]).card1 = shuffleCard.get(6);
+							getThirdPlayer(str[1]).card2 = shuffleCard.get(7);
 							output.writeUTF(
 									CODE_KEY.CODE_GAMESTART + "_" + shuffleCard.get(0) + "_" + shuffleCard.get(1)+ "_" +CODE_KEY.CODE_TOKEN_OFF);
-							getOtherPlayer(str[1]).dos.writeUTF(
+							getFirstPlayer(str[1]).dos.writeUTF(
 									CODE_KEY.CODE_GAMESTART + "_" + shuffleCard.get(2) + "_" + shuffleCard.get(3)+ "_" +CODE_KEY.CODE_TOKEN_ON);
+							getSecondPlayer(str[1]).dos.writeUTF(
+									CODE_KEY.CODE_GAMESTART + "_" + shuffleCard.get(4) + "_" + shuffleCard.get(5)+ "_" +CODE_KEY.CODE_TOKEN_ON);
+							getThirdPlayer(str[1]).dos.writeUTF(
+									CODE_KEY.CODE_GAMESTART + "_" + shuffleCard.get(6) + "_" + shuffleCard.get(7)+ "_" +CODE_KEY.CODE_TOKEN_ON);
 							playerToken = 0;
 						} else {
 							System.out.println("else");
@@ -329,17 +367,22 @@ public class GameServer {
 								player0.state = CODE_KEY.CODE_GAMESTART;
 							} else if (str[1].equals("1")) {
 								player1.state = CODE_KEY.CODE_GAMESTART;
-							}
+							} else if (str[1].equals("2")) {
+								player2.state = CODE_KEY.CODE_GAMESTART;
+							} else if (str[1].equals("3")) {
+								player3.state = CODE_KEY.CODE_GAMESTART;
+							} 
 						}
 					} else if (str[0].equals(CODE_KEY.CODE_GAME)) {
-						playerToken = getOtherPlayer(str[5]).playerNumber;
+						playerToken = getMyPlayer(str[5]).playerNumber;
 						Player p = getMyPlayer(str[5]);
 						p.state = str[1];
 						allGameMoney = Integer.parseInt(str[3]);
 						p.money = Integer.parseInt(str[4]);
 						if(str[1].equals(CODE_KEY.CODE_CALL)){
-							if(getOtherPlayer(str[5]).state.equals(CODE_KEY.CODE_CALL)){
-								//둘다 콜
+							if(getFirstPlayer(str[5]).state.equals(CODE_KEY.CODE_CALL) && getSecondPlayer(str[5]).state.equals(CODE_KEY.CODE_CALL)
+									&& getThirdPlayer(str[5]).state.equals(CODE_KEY.CODE_CALL)){
+								//넷다 콜
 								//저지
 								//게임종료
 								StringBuilder winStr = new StringBuilder();
@@ -363,41 +406,66 @@ public class GameServer {
 									p.money = p.money+ allGameMoney;
 									winStr.append(p.money);
 									winStr.append("_");
-									winStr.append(getOtherPlayer(str[5]).money);
-									winStr.append("_");
-									winStr.append(getOtherPlayer(str[5]).card1);
-									winStr.append("_");
-									winStr.append(getOtherPlayer(str[5]).card2);
+									winStr.append(getFirstPlayer(str[5]).money + getSecondPlayer(str[5]).money + getThirdPlayer(str[5]).money);
 									p.dos.writeUTF(winStr.toString());
 									
-									loseStr.append(getOtherPlayer(str[5]).money);
+									loseStr.append(getFirstPlayer(str[5]).money + getSecondPlayer(str[5]).money + getThirdPlayer(str[5]).money);
 									loseStr.append("_");
 									loseStr.append(p.money);
-									loseStr.append("_");
-									loseStr.append(p.card1);
-									loseStr.append("_");
-									loseStr.append(p.card2);
-									getOtherPlayer(str[5]).dos.writeUTF(loseStr.toString());
+									getFirstPlayer(str[5]).dos.writeUTF(loseStr.toString());
+									getSecondPlayer(str[5]).dos.writeUTF(loseStr.toString());
+									getThirdPlayer(str[5]).dos.writeUTF(loseStr.toString());
 								}else{
-									getOtherPlayer(str[5]).money = getOtherPlayer(str[5]).money+allGameMoney;
-									loseStr.append(p.money);
-									loseStr.append("_");
-									loseStr.append(getOtherPlayer(str[5]).money);
-									loseStr.append("_");
-									loseStr.append(getOtherPlayer(str[5]).card1);
-									loseStr.append("_");
-									loseStr.append(getOtherPlayer(str[5]).card2);
-									p.dos.writeUTF(loseStr.toString());
 									
-									winStr.append(getOtherPlayer(str[5]).money);
-									winStr.append("_");
-									winStr.append(p.money);
-									winStr.append("_");
-									winStr.append(p.card1);
-									winStr.append("_");
-									winStr.append(p.card2);
+									if(winner == 0){
+										p.money = p.money+allGameMoney;
+										loseStr.append(p.money);
+										loseStr.append("_");
+										loseStr.append(getFirstPlayer("0").money + getSecondPlayer("0").money + getThirdPlayer("0").money);
+										p.dos.writeUTF(loseStr.toString());
+										
+										winStr.append(getMyPlayer("0").money);
+										winStr.append("_");
+										winStr.append(p.money);
+										getMyPlayer("0").dos.writeUTF(winStr.toString());
+									} else if (winner == 1){
+										p.money = p.money+allGameMoney;
+										loseStr.append(p.money);
+										loseStr.append("_");
+										loseStr.append(getFirstPlayer("1").money + getSecondPlayer("1").money + getThirdPlayer("1").money);
+										p.dos.writeUTF(loseStr.toString());
+										
+										getMyPlayer("1").money = getMyPlayer("1").money+allGameMoney;
+										winStr.append(getMyPlayer("1").money);
+										winStr.append("_");
+										winStr.append(getFirstPlayer("1").money + getSecondPlayer("1").money + getThirdPlayer("1").money);
+										getMyPlayer("1").dos.writeUTF(winStr.toString());
+									} else if (winner == 2){
+										p.money = p.money+allGameMoney;
+										loseStr.append(p.money);
+										loseStr.append("_");
+										loseStr.append(getFirstPlayer("2").money + getSecondPlayer("2").money + getThirdPlayer("2").money);
+										p.dos.writeUTF(loseStr.toString());
+										
+										getMyPlayer("2").money = getMyPlayer("2").money+allGameMoney;
+										winStr.append(getMyPlayer("2").money);
+										winStr.append("_");
+										winStr.append(getFirstPlayer("2").money + getSecondPlayer("2").money + getThirdPlayer("2").money);
+										getMyPlayer("2").dos.writeUTF(winStr.toString());
+									} else{
+										p.money = p.money+allGameMoney;
+										loseStr.append(p.money);
+										loseStr.append("_");
+										loseStr.append(getFirstPlayer("3").money + getSecondPlayer("3").money + getThirdPlayer("3").money);
+										p.dos.writeUTF(loseStr.toString());
+										
+										getMyPlayer("3").money = getMyPlayer("3").money+allGameMoney;
+										winStr.append(getMyPlayer("3").money);
+										winStr.append("_");
+										winStr.append(getFirstPlayer("3").money + getSecondPlayer("3").money + getThirdPlayer("3").money);
+										getMyPlayer("3").dos.writeUTF(winStr.toString());
+									}
 									
-									getOtherPlayer(str[5]).dos.writeUTF(winStr.toString());
 								}
 							}else{
 								StringBuilder strbuilder = new StringBuilder();
@@ -410,45 +478,79 @@ public class GameServer {
 								strbuilder.append(str[3]);
 								strbuilder.append("_");
 								strbuilder.append(str[4]);
-								getOtherPlayer(str[5]).dos.writeUTF(strbuilder.toString());
+								getFirstPlayer(str[5]).dos.writeUTF(strbuilder.toString());
+								getSecondPlayer(str[5]).dos.writeUTF(strbuilder.toString());
+								getThirdPlayer(str[5]).dos.writeUTF(strbuilder.toString());
 							}
 						}else if(str[1].equals(CODE_KEY.CODE_DIE)){
 							//게임종료
+							if(winner == 0){
+								getMyPlayer("0").money = getMyPlayer("0").money+allGameMoney;
+								StringBuilder winStr = new StringBuilder();
+								winStr.append(CODE_KEY.CODE_GAMEEND);
+								winStr.append("_");
+								winStr.append(CODE_KEY.CODE_WIN);
+								winStr.append("_");
+								winStr.append(allGameMoney);
+								winStr.append("_");
+								winStr.append(getMyPlayer("0").money);
+								System.out.println("WINNER:"+winStr.toString());
+								getMyPlayer("0").dos.writeUTF(winStr.toString());
+								
+								StringBuilder loseStr = new StringBuilder();
+								loseStr.append(CODE_KEY.CODE_GAMEEND);
+								loseStr.append("_");
+								loseStr.append(CODE_KEY.CODE_LOSE);
+								loseStr.append("_");
+								loseStr.append(allGameMoney);
+								loseStr.append("_");
+								loseStr.append(p.money);
+								loseStr.append("_");
+								loseStr.append(getMyPlayer("0").money);
+								System.out.println("LOSER:"+loseStr.toString());
+								p.dos.writeUTF(loseStr.toString());
+								
+							} else if(winner == 1){
+								
+								getMyPlayer("1").money = getMyPlayer("1").money+allGameMoney;
+								StringBuilder winStr = new StringBuilder();
+								winStr.append(CODE_KEY.CODE_GAMEEND);
+								winStr.append("_");
+								winStr.append(CODE_KEY.CODE_WIN);
+								winStr.append("_");
+								winStr.append(allGameMoney);
+								winStr.append("_");
+								winStr.append(getMyPlayer("1").money);
+								System.out.println("WINNER:"+winStr.toString());
+								getMyPlayer("1").dos.writeUTF(winStr.toString());
+							} else if(winner == 2){
+								
+								getMyPlayer("2").money = getMyPlayer("2").money+allGameMoney;
+								StringBuilder winStr = new StringBuilder();
+								winStr.append(CODE_KEY.CODE_GAMEEND);
+								winStr.append("_");
+								winStr.append(CODE_KEY.CODE_WIN);
+								winStr.append("_");
+								winStr.append(allGameMoney);
+								winStr.append("_");
+								winStr.append(getMyPlayer("2").money);
+								System.out.println("WINNER:"+winStr.toString());
+								getMyPlayer("2").dos.writeUTF(winStr.toString());
+							} else{
+								
+								getMyPlayer("3").money = getMyPlayer("3").money+allGameMoney;
+								StringBuilder winStr = new StringBuilder();
+								winStr.append(CODE_KEY.CODE_GAMEEND);
+								winStr.append("_");
+								winStr.append(CODE_KEY.CODE_WIN);
+								winStr.append("_");
+								winStr.append(allGameMoney);
+								winStr.append("_");
+								winStr.append(getMyPlayer("3").money);
+								System.out.println("WINNER:"+winStr.toString());
+								getMyPlayer("3").dos.writeUTF(winStr.toString());
+							}
 							
-							getOtherPlayer(str[5]).money = getOtherPlayer(str[5]).money+allGameMoney;
-							StringBuilder winStr = new StringBuilder();
-							winStr.append(CODE_KEY.CODE_GAMEEND);
-							winStr.append("_");
-							winStr.append(CODE_KEY.CODE_WIN);
-							winStr.append("_");
-							winStr.append(allGameMoney);
-							winStr.append("_");
-							winStr.append(getOtherPlayer(str[5]).money);
-							winStr.append("_");
-							winStr.append(p.money);
-							winStr.append("_");
-							winStr.append(p.card1);
-							winStr.append("_");
-							winStr.append(p.card2);
-							System.out.println("WINNER:"+winStr.toString());
-							getOtherPlayer(str[5]).dos.writeUTF(winStr.toString());
-							
-							StringBuilder loseStr = new StringBuilder();
-							loseStr.append(CODE_KEY.CODE_GAMEEND);
-							loseStr.append("_");
-							loseStr.append(CODE_KEY.CODE_LOSE);
-							loseStr.append("_");
-							loseStr.append(allGameMoney);
-							loseStr.append("_");
-							loseStr.append(p.money);
-							loseStr.append("_");
-							loseStr.append(getOtherPlayer(str[5]).money);
-							loseStr.append("_");
-							loseStr.append(getOtherPlayer(str[5]).card1);
-							loseStr.append("_");
-							loseStr.append(getOtherPlayer(str[5]).card2);
-							System.out.println("LOSER:"+loseStr.toString());
-							p.dos.writeUTF(loseStr.toString());
 							
 						}else{//half, double
 							StringBuilder strbuilder = new StringBuilder();
@@ -461,31 +563,17 @@ public class GameServer {
 							strbuilder.append(str[3]);
 							strbuilder.append("_");
 							strbuilder.append(str[4]);
-							getOtherPlayer(str[5]).dos.writeUTF(strbuilder.toString());
+							getFirstPlayer(str[5]).dos.writeUTF(strbuilder.toString());
+							getSecondPlayer(str[5]).dos.writeUTF(strbuilder.toString());
+							getThirdPlayer(str[5]).dos.writeUTF(strbuilder.toString());
 						}
-						
-						
+							
 					}
-					// }else if(str.equals(CODE_KEY.CODE_CALL)){
-					// gameMoney =
-					// }else if(str.equals(CODE_KEY.CODE_DOUBLE)){
-					//
-					// }else if(str.equals(CODE_KEY.CODE_MAX)){
-					//
-					// }else if(str.equals(CODE_KEY.CODE_DIE)){
-
-					// 0 상태
-					// 1 필요한돈
-					// String[] input = str.split("_");
-
-					// System.out.println("카드보낸다");
-					// System.out.println(shuffleCard.get(player) + "");
-					// System.out.println(shuffleCard.get(player + 2) + "");
+				
 				}
 			} catch (Exception e) {
 				System.out.println(e);
 			}
-
 		}
 	}
 
