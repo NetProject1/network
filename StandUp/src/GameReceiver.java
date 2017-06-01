@@ -1,12 +1,10 @@
-package Thread;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
 import Client.Client;
 import Client.ClientGUI;
-import Model.CODE_KEY;
+import CODE_KEY;
 
 public class GameReceiver extends Thread {
 	Socket socket;
