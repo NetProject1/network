@@ -146,24 +146,16 @@ public class ServerReceiver extends Thread {
 			EnterRoom(rNum);
 			break;
 		case MsgProtocol.EXITROOM:
-			if(user.room.isGameStart){
-				user.dos.writeUTF(MsgProtocol.EXITROOM+"/FAIL");
-			}else{
-				if(user.room.roomMaster.equals(user)){
-					if(user.room.passMaster()==1){
-						user.room.userArray.remove(user);
-					}else{
-						roomArray.remove(user.room);								
-					}
-				}else{
-					user.room.userArray.remove(user);
-				}
-				user.dos.writeUTF(MsgProtocol.EXITROOM+"/OK");
-				user.room=null;
-				userList();
-				roomList();
-			}
+			ExitRoom();
+			
 			break;
+		case MsgProtocol.WAITROOM_UPDATE:
+			roomList();
+			userList();
+		case MsgProtocol.ROOM_UPDATE:
+			if(user.room!=null){
+			roomUpdate(user.room.roomNumber);
+			}
 			}
 		 }catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -192,13 +184,41 @@ public class ServerReceiver extends Thread {
 		//방 만들어졌으니 클라이언트쪽에서 게임방 ui 띄우도록 정보를 보내줌
 		try {
 			user.dos.writeUTF(MsgProtocol.MAKEROOM+"/OK/"+rnum+"/"+rName);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
-	
+	void ExitRoom(){
+		try{
+			int rnum=user.room.roomNumber;
+			if(user.room.isGameStart){
+				user.dos.writeUTF(MsgProtocol.EXITROOM+"/FAIL/게임이 시작중입니다.");
+			}else{
+				if(user.room.roomMaster.equals(user)){
+					if(user.room.passMaster()==1){
+						user.room.userArray.remove(user);
+					
+					}else{
+						roomArray.remove(user.room);								
+					}
+					
+				}else{
+					user.room.userArray.remove(user);
+				}
+				
+			user.dos.writeUTF(MsgProtocol.EXITROOM+"/OK");
+			user.room=null;
+			userList();
+			roomList();
+			roomUpdate(rnum);
+		}
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
 	void EnterRoom(String rNum){
 		try{
 			Room enterRoom=null;
@@ -219,7 +239,7 @@ public class ServerReceiver extends Thread {
 						//같은 방인 놈들 전원 방정보 갱신해야함.
 						user.dos.writeUTF(MsgProtocol.ENTERROOM+"/OK/"+user.room.roomNumber
 								+"/"+user.room.roomName);
-						roomUpdate();
+						
 					}else{
 						user.dos.writeUTF(MsgProtocol.ENTERROOM+"/FAIL/방이 꽉 찼습니다.");
 					}
@@ -267,18 +287,26 @@ public class ServerReceiver extends Thread {
 		loginEchoMsg(msg);
 	}
 	//현재 접속중인 방의 정보를 같은 방의 모든 클라이언트에게 업데이트함.
-	void roomUpdate(){
-		if(user.room!=null){
-			String str=MsgProtocol.ROOM_UPDATE;
-			user.room.GetRoomINFO();
-			for(int i=0; i <user.room.userArray.size() ;i++){
-				try {
-					userArray.get(i).dos.writeUTF(str);
-				} catch (IOException e) {
-				// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+	void roomUpdate(int rNum){
+		Room selectedRoom=null;
+		for(int i=0;i< roomArray.size(); i++){
+			if(roomArray.get(i).roomNumber==rNum){
+				selectedRoom=roomArray.get(i);
 			}
 		}
+		String msg=MsgProtocol.ROOM_UPDATE+selectedRoom.GetRoomINFO();
+		//전달할 방을 찾아서
+		for(int i=0; i <selectedRoom.userArray.size() ;i++){
+			try {
+				if(selectedRoom.userArray.get(i).isLogin){
+				selectedRoom.userArray.get(i).dos.writeUTF(msg);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
+	
 }

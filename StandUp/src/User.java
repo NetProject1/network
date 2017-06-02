@@ -11,6 +11,8 @@ public class User {
 	int lose;
 	DataInputStream dis;
 	DataOutputStream dos;
+	
+	int gamePlayerNumber;
 	boolean isLogin=false;
 	
 	Room room=null;

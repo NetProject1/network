@@ -91,6 +91,8 @@ public class Client implements Runnable {
 		 String rNum, rName, rUsers;
 		 String result;
 		 System.out.println(protocol);
+		 try{
+		 
 		 switch (protocol) {
 		 //로그인시 ok 이면 user 정보를 갱신하고 대기실ui
 		case MsgProtocol.LOGIN:
@@ -143,22 +145,27 @@ public class Client implements Runnable {
 				user.room=newroom;
 				gameroom=new GameRoomUI(this);
 				waitRoom.dispose();
+				//수정
+				user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
 			}
+
 			break;
 		case MsgProtocol.ENTERROOM:
 			result=token.nextToken();
 			if(result.equals("OK")){
 				rNum=token.nextToken();
 				rName=token.nextToken();
-				
 				user.room=new Room(Integer.parseInt(rNum),rName,new User());
 				gameroom=new GameRoomUI(this);
 				waitRoom.dispose();
 				
+				user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
+
 			}else{
 				result=token.nextToken();
 				 JOptionPane.showMessageDialog(null, result);
 			}
+			gameroom.roomUpdate();
 			break;
 		case MsgProtocol.EXITROOM:
 			result=token.nextToken();
@@ -166,18 +173,25 @@ public class Client implements Runnable {
 				user.room=null;
 				waitRoom=new WaitRoomUI(this);
 				gameroom.dispose();
+				try {
+					user.dos.writeUTF(MsgProtocol.WAITROOM_UPDATE);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 			break;
 		case MsgProtocol.ROOM_UPDATE:
 			roomUpdate(token);
 			break;
 		}
-		//로그인시
-		 	//성공
-		 	//실패
-		 		//실패시엔 소켓 dis dos close 함.
+		 
+		 }catch (Exception e) {
+
+		}
 		//게임진행시
-		//채팅 받아왔을시
+		
 		
 	}
 	 void uiTerminated(){
@@ -292,7 +306,9 @@ public class Client implements Runnable {
 		waitRoom.chatArea.setCaretPosition(waitRoom.chatArea.getDocument().getLength());
 	}
 	//게임 시작여부 룸마스터 정보 유저정보순으로 받아온다
+	//수정요함
 	void roomUpdate(StringTokenizer token){
+		if(user.room!=null){
 		String isGameStart=token.nextToken();
 		if(isGameStart.equals("true")){
 			user.room.isGameStart=true;
@@ -319,17 +335,24 @@ public class Client implements Runnable {
 			 money=Integer.parseInt(token.nextToken());
 			 win=Integer.parseInt(token.nextToken());
 			 lose=Integer.parseInt(token.nextToken());
-			 if(id.equals(user.id)){
-					user.room.userArray.add(user);
-				}else{
-					 newuser=new User(id, nick, money, win, lose);
-					 user.room.userArray.add(newuser);
-				}
-			
+			 if(user.room.roomMaster.id.equals(id)){
+				 user.room.userArray.add(user.room.roomMaster);
+			 }else{
+				 if(id.equals(user.id)){
+						user.room.userArray.add(user);
+					}else{
+						 newuser=new User(id, nick, money, win, lose);
+						 user.room.userArray.add(newuser);
+					}	
+			 }
+					
 		}
-		
-		
+		}else{
+			JOptionPane.showMessageDialog(null, "방이없는데 업데이트하라니?");
+		}
+		gameroom.roomUpdate();
 	}
+	
 	public void changeIP(){
 		serverAccess();
 	}

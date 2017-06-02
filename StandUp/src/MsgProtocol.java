@@ -12,4 +12,5 @@ public class MsgProtocol {
 	public static final String EXITROOM="EXR";
 	
 	public static final String ROOM_UPDATE="RUP";
+	public static final String WAITROOM_UPDATE="WRUP";
 }
