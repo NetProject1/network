@@ -244,7 +244,12 @@ public class ServerReceiver extends Thread {
 			//패확인
 			roomUpdate(user.room.roomNumber);
 			System.out.println("패확인합니다 쿵짜리 작작");
-			
+			try {
+				Thread.sleep(4000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			judge();
 			
 		}else{
@@ -581,7 +586,7 @@ public class ServerReceiver extends Thread {
 	void judge(){
 		int winnumber=user.room.judge();
 		//1000번은 재경기이다.
-		if(winnumber!=1000){
+		if(winnumber<1000){
 		user.room.gameState="end";
 		user.room.isGameStart=false;
 		//승자 정보 패자 정보 줌.
@@ -611,10 +616,12 @@ public class ServerReceiver extends Thread {
 			// TODO: handle exception
 		}
 		
-		}else{
+		}else if(winnumber==1000){
 			//재경기
-			System.out.println("재경기이다");
 			GooSaReStart();
+		}else if(winnumber==2000){
+			System.out.println("같은 카드끼리 재경기이다");
+			SameCardReStart();
 		}
 	}
 	void RoomUsersUpdate(){
@@ -647,5 +654,39 @@ public class ServerReceiver extends Thread {
 		String msg=MsgProtocol.CODE_GAMESTART+"/OK";
 		GameRoomEcho(msg);
 	
+	}
+	//같은 크기의 패끼리 재시합
+	void SameCardReStart(){
+		int maxValue=0;
+		for(int i=0; i< user.room.userArray.size();i++){
+			if(!user.room.userArray.get(i).state.equals("die")){
+			if(user.room.userArray.get(i).cardValue>=maxValue){
+				maxValue=user.room.userArray.get(i).cardValue;
+			}
+			}
+		}
+		//최고 패가 아닌 사람은 다 죽는다!
+		for(int i=0; i< user.room.userArray.size();i++){
+			if(!user.room.userArray.get(i).state.equals("die")){
+				if(user.room.userArray.get(i).cardValue<maxValue){
+					user.room.userArray.get(i).state="die";
+				}
+			}
+		}
+		for(int i=0; i< user.room.userArray.size();i++){
+			if(!user.room.userArray.get(i).state.equals("die")){
+			  user.room.userArray.get(i).userRestart();
+			}
+		}
+		user.room.cardPoint=0;
+		user.room.setPlayersCardBack1();
+		user.room.dealCard();
+		
+		user.room.drawTwoCards();
+		
+		user.room.gameState="start";
+		String msg=MsgProtocol.CODE_GAMESTART+"/OK";
+		GameRoomEcho(msg);
+		
 	}
 }

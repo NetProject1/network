@@ -256,8 +256,6 @@ public class Room {
 		priority[4][16] = priority[4][16] + 600;
 		priority[14][16] = priority[14][16] + 600;
 		//갑오
-		priority[1][9] = priority[1][9]+500;
-		priority[1][19] = priority[1][19]+500;
 		priority[10][9] = priority[10][9]+500;
 		priority[10][19] = priority[10][19]+500;
 		priority[2][7] = priority[2][7]+500;
@@ -344,7 +342,7 @@ public class Room {
 					}
 				}
 				if(goosa == players.size()){
-					//재경기!
+					//구사 재경기!
 					winner=1000;
 					return winner;
 				}
@@ -355,8 +353,10 @@ public class Room {
 			}
 		}
 		User winUSER;
+		int maxvaluePlayers=0;
 		for(int i = 0; i<players.size(); i++){
 			if( players.get(i).cardValue==max){
+				maxvaluePlayers++;
 				winUSER=players.get(i);
 				for(int j = 0; i<userArray.size(); j++){
 					if( userArray.get(i).equals(winUSER)){
@@ -365,6 +365,9 @@ public class Room {
 					}
 				}
 			}
+		}
+		if(maxvaluePlayers>=2){
+			winner=2000;
 		}
 		return winner;
 		
