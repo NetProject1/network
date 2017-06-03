@@ -65,6 +65,28 @@ public class DBDAO {
 		
 		return result;
 	}
+	//정보 갱신  
+	String updateUserINFO(String id){
+		String result = null;
+		ConnectDB();	
+		try {
+			stmt=conn.createStatement();
+			//쿼리문 실행
+			sql="select * from player where id='" + id + "'";
+			rs=stmt.executeQuery(sql);	
+			if(rs.next()){
+				//id,password,nickname,money,win,lose 순으로 보낸다.
+				result=rs.getString("ID")+"/"+rs.getString("PASSWORD")+"/"+rs.getString("NICKNAME")+"/"+rs.getInt("MONEY")
+				+"/"+rs.getInt("WIN")+"/"+rs.getInt("LOSE");
+			}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+		return result;
+	}
 	//ID만 검색
 	int checkID(String id){
 		this.id=id;
@@ -175,6 +197,62 @@ public class DBDAO {
 	}
 	void upadateMoney(String id,int value){
 		
+	}
+	void updateWinMoney(String id,int win,int money){
+		int result;
+		try {
+			//db 접속
+			ConnectDB();
+			
+			sql= "update player set win=?, money=? where id=?";
+				pstmt=conn.prepareStatement(sql);
+				pstmt.setInt(1, win);
+				pstmt.setInt(2, money);
+				pstmt.setString(3, id);
+				
+				int r=pstmt.executeUpdate();
+				if(r>0){
+					System.out.println("업데이트 성공");
+					result=0;
+				}else{
+					System.out.println("업데이트 실패");
+					result=1;
+				}
+				
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	void updateLoseMoney(String id,int lose,int money){
+		int result;
+		try {
+			//db 접속
+			ConnectDB();
+			
+			sql= "update player set lose=?, money=? where id=?";
+				pstmt=conn.prepareStatement(sql);
+				pstmt.setInt(1, lose);
+				pstmt.setInt(2, money);
+				pstmt.setString(3, id);
+				
+				int r=pstmt.executeUpdate();
+				if(r>0){
+					System.out.println("업데이트 성공");
+					result=0;
+				}else{
+					System.out.println("업데이트 실패");
+					result=1;
+				}
+				
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

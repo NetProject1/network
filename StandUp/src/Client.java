@@ -3,6 +3,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -10,7 +11,7 @@ import javax.swing.JOptionPane;
 
 public class Client implements Runnable {
 	static int PORT=7777; //서버 포트
-	static String IP="111.111.111.111"; //서버 아이피
+	static String IP="192.168.219.195"; //서버 아이피
 	
 	Socket socket; //서버와 접속할 소켓
 	DataInputStream dis; // 입출력 스트림
@@ -24,7 +25,10 @@ public class Client implements Runnable {
 	
 	//유저 정보 
 	User user;
-	
+	//최종 카드 구성시 카드 번호 저장
+	boolean card1select=false;
+	boolean card2select=false;
+	boolean card3select=false;
 	
 	public Client() {
 		//생성과 함께 ui 생성 ui와 연결했을시 
@@ -85,12 +89,13 @@ public class Client implements Runnable {
 	}
 	//메세지를 받아와 해석해 행동함
 	 synchronized void msgParsing(String receiveMsg) {
+		 System.out.println(receiveMsg);
 		 StringTokenizer token=new StringTokenizer(receiveMsg, "/"); //토큰
 		 String protocol= token.nextToken();//토큰으로 분리된 스트링
 		 String id,pw, nick;
 		 String rNum, rName, rUsers;
 		 String result;
-		 System.out.println(protocol);
+		
 		 try{
 		 
 		 switch (protocol) {
@@ -131,6 +136,12 @@ public class Client implements Runnable {
 		case MsgProtocol.WAITROOM_CHAT:
 			result=token.nextToken()+"\n";
 			chatRecieve(result);
+			break;
+		case MsgProtocol.GAMEROOM_CHAT:
+			result=token.nextToken()+"\n";
+			if(gameroom!=null){
+			gameRoomChatRecieve(result);
+			}
 			break;
 		case MsgProtocol.USERLIST_UPDATE:
 			userList(token);
@@ -184,6 +195,60 @@ public class Client implements Runnable {
 			break;
 		case MsgProtocol.ROOM_UPDATE:
 			roomUpdate(token);
+			break;
+		case MsgProtocol.CODE_GAMESTART:
+			result=token.nextToken();
+			if(result.equals("OK")){
+			//게임이 시작되었다. 카드 배부 애니메이션을 실행한다. 요건 나중에 수정예정
+			gameroom.HandOutCard(0, 2);
+			Thread.sleep(50);	
+			gameroom.HandOutCard(1, 2);
+			Thread.sleep(50);	
+			gameroom.HandOutCard(2, 2);
+			Thread.sleep(50);
+			gameroom.HandOutCard(3, 2);
+			Thread.sleep(50);
+			user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
+			}else{
+				JOptionPane.showMessageDialog(null,"인원이 부족합니다.");
+			}
+			//그 후 정보를 갱신 받는다. 갱신 받고 카드 선택 화면으로 넘어간다.
+			
+			break;
+		case MsgProtocol.CODE_CARDSET:
+			//카드 뿌려주는거 수정
+			gameroom.HandOutCard(0, 1);
+			Thread.sleep(50);	
+			gameroom.HandOutCard(1, 1);
+			Thread.sleep(50);	
+			gameroom.HandOutCard(2, 1);
+			Thread.sleep(50);
+			gameroom.HandOutCard(3, 1);
+			Thread.sleep(50);
+			user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
+			break;
+		case MsgProtocol.CODE_GAMEEND:
+			result=token.nextToken();
+			if(result.equals("WIN")){
+				//gameroom 이긴거 애니매이션
+				gameroom.winAnimate();
+				Thread.sleep(4000);
+			
+			}else{
+				//gameroom 진거 애니메이션
+				gameroom.loseAnimate();
+				Thread.sleep(4000);
+			}
+			user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
+			
+			break;
+		case MsgProtocol.USERUPDATE:
+			user.id=token.nextToken();
+			user.pw=token.nextToken();
+			user.nickName=token.nextToken();
+			user.money=Integer.parseInt(token.nextToken());
+			user.win=Integer.parseInt(token.nextToken());
+			user.lose=Integer.parseInt(token.nextToken());
 			break;
 		}
 		 
@@ -305,7 +370,12 @@ public class Client implements Runnable {
 		waitRoom.chatArea.append(str);
 		waitRoom.chatArea.setCaretPosition(waitRoom.chatArea.getDocument().getLength());
 	}
-	//게임 시작여부 룸마스터 정보 유저정보순으로 받아온다
+	
+	void gameRoomChatRecieve(String str){
+		gameroom.textArea.append(str);
+		gameroom.textArea.setCaretPosition(waitRoom.chatArea.getDocument().getLength());
+	}
+	//게임 방정보 룸마스터정보 유저정보순으로 받아온다
 	//수정요함
 	void roomUpdate(StringTokenizer token){
 		if(user.room!=null){
@@ -315,33 +385,96 @@ public class Client implements Runnable {
 		}else{
 			user.room.isGameStart=false;
 		}
+		String gameState=token.nextToken();
+		user.room.gameState=gameState;
+		String msg=token.nextToken();
+		user.room.bet=Integer.parseInt(msg);
+		msg=token.nextToken();
+		user.room.amountMoney=Integer.parseInt(msg);
+		msg=token.nextToken();
+		user.room.playerturn=Integer.parseInt(msg);
+		
 		User newuser;
+		String isReady=token.nextToken();
+		String state=token.nextToken();
 		String id=token.nextToken();
 		String nick=token.nextToken();
 		int money=Integer.parseInt(token.nextToken());
 		int win=Integer.parseInt(token.nextToken());
 		int lose=Integer.parseInt(token.nextToken());
+		int playernum=Integer.parseInt(token.nextToken());
+		int card1=Integer.parseInt(token.nextToken());
+		int card2=Integer.parseInt(token.nextToken());
+		int card3=Integer.parseInt(token.nextToken());
+		
 		if(id.equals(user.id)){
 			user.room.roomMaster=user;
+			user.playerNumber=playernum;
+			if(isReady.equals("true")){
+				user.isReady=true;
+			}else{
+				user.isReady=false;
+			}
+			user.state=state;
+			user.card1=card1;
+			user.card2=card2;
+			user.card3=card3;
 		}else{
 			newuser=new User(id, nick, money, win, lose);
+			if(isReady.equals("true")){
+				newuser.isReady=true;
+			}else{
+				newuser.isReady=false;
+			}
+			newuser.state=state;
+			newuser.playerNumber=playernum;
+			newuser.card1=card1;
+			newuser.card2=card2;
+			newuser.card3=card3;
 			user.room.roomMaster=newuser;
 		}
 		
 		user.room.userArray.clear();
 		while(token.hasMoreTokens()){
+			 isReady=token.nextToken();
+			 state=token.nextToken();
 			 id=token.nextToken();
 			 nick=token.nextToken();
 			 money=Integer.parseInt(token.nextToken());
 			 win=Integer.parseInt(token.nextToken());
 			 lose=Integer.parseInt(token.nextToken());
+			 playernum=Integer.parseInt(token.nextToken());
+			 card1=Integer.parseInt(token.nextToken());
+			 card2=Integer.parseInt(token.nextToken());
+			 card3=Integer.parseInt(token.nextToken());
+			 
 			 if(user.room.roomMaster.id.equals(id)){
 				 user.room.userArray.add(user.room.roomMaster);
 			 }else{
 				 if(id.equals(user.id)){
 						user.room.userArray.add(user);
+						if(isReady.equals("true")){
+							user.isReady=true;
+						}else{
+							user.isReady=false;
+						}
+						user.state=state;
+						user.playerNumber=playernum;
+						user.card1=card1;
+						user.card2=card2;
+						user.card3=card3;
 					}else{
 						 newuser=new User(id, nick, money, win, lose);
+						 if(isReady.equals("true")){
+							 newuser.isReady=true;
+							}else{
+								newuser.isReady=false;
+							}
+						 newuser.state=state;
+						 newuser.playerNumber=playernum;
+						newuser.card1=card1;
+						newuser.card2=card2;
+						newuser.card3=card3;
 						 user.room.userArray.add(newuser);
 					}	
 			 }
@@ -356,5 +489,164 @@ public class Client implements Runnable {
 	public void changeIP(){
 		serverAccess();
 	}
-	
+	public void choseCard1(){
+		try {
+			System.out.println(user.room.gameState);
+			if(user.room.gameState.equals("start") && !user.isReady&& !user.state.equals("die")){
+			user.dos.writeUTF(MsgProtocol.CODE_CARDOPEN+"/CARD1");
+			gameroom.setSelectedCard1(true);
+			}
+			if(user.room.gameState.equals("cardset") && !user.isReady&& !user.state.equals("die")){
+				if(!card1select){
+				gameroom.setSelectedCard1(true);
+				card1select=true;
+				}else{
+					gameroom.setSelectedCard1(false);
+					card1select=false;
+				}
+				int i=0;
+				String card1="no";
+				String card2="no";
+				String card3="no";
+				if(card1select){
+					i++;
+					card1="card1";
+				}
+				if(card2select){
+					i++;
+					card2="card2";
+				}
+				if(card3select){
+					i++;
+					card3="card3";
+				}
+				if(i==2){
+					int q=JOptionPane.showConfirmDialog(null, "이렇게 최종 패를 결정하시겠습니까?");
+					if(q==0){
+						try {
+							
+							user.dos.writeUTF(MsgProtocol.CODE_CARDSET+"/"+card1
+									+"/"+card2+"/"+card3);
+							user.isReady=true;
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void choseCard2(){
+		try {
+			System.out.println(user.room.gameState);
+			if(user.room.gameState.equals("start") && !user.isReady && !user.state.equals("die")){
+				user.dos.writeUTF(MsgProtocol.CODE_CARDOPEN+"/CARD2");
+				gameroom.setSelectedCard2(true);
+			}
+			if(user.room.gameState.equals("cardset") && !user.isReady && !user.state.equals("die")){
+				if(!card2select){
+				gameroom.setSelectedCard2(true);
+				card2select=true;
+				}else{
+					gameroom.setSelectedCard2(false);
+					card2select=false;
+				}
+				int i=0;
+				String card1="no";
+				String card2="no";
+				String card3="no";
+				if(card1select){
+					i++;
+					card1="card1";
+				}
+				if(card2select){
+					i++;
+					card2="card2";
+				}
+				if(card3select){
+					i++;
+					card3="card3";
+				}
+				if(i==2){
+					int q=JOptionPane.showConfirmDialog(null, "이렇게 최종 패를 결정하시겠습니까?");
+					if(q==0){
+						try {
+							
+							user.dos.writeUTF(MsgProtocol.CODE_CARDSET+"/"+card1
+									+"/"+card2+"/"+card3);
+							user.isReady=true;
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void choseCard3(){
+		if(user.room.gameState.equals("cardset") && !user.isReady && !user.state.equals("die")){
+			if(!card3select){
+			gameroom.setSelectedCard3(true);
+			card3select=true;
+			}else{
+				gameroom.setSelectedCard3(false);
+				card3select=false;
+			}
+			int i=0;
+			String card1="no";
+			String card2="no";
+			String card3="no";
+			if(card1select){
+				i++;
+				card1="card1";
+			}
+			if(card2select){
+				i++;
+				card2="card2";
+			}
+			if(card3select){
+				i++;
+				card3="card3";
+			}
+			if(i==2){
+				int q=JOptionPane.showConfirmDialog(null, "이렇게 최종 패를 결정하시겠습니까?");
+				if(q==0){
+					try {
+						
+						user.dos.writeUTF(MsgProtocol.CODE_CARDSET+"/"+card1
+								+"/"+card2+"/"+card3);
+						user.isReady=true;
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		
+	}
+	public void betMoney(String bet){
+		try{
+		if(bet.equals("call")){
+			user.dos.writeUTF(MsgProtocol.CODE_CALL);
+		}else if(bet.equals("double")){
+			user.dos.writeUTF(MsgProtocol.CODE_DOUBLE);
+		}else if(bet.equals("half")){
+			user.dos.writeUTF(MsgProtocol.CODE_HALF);
+		}else if(bet.equals("die")){
+			user.dos.writeUTF(MsgProtocol.CODE_DIE);
+		}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

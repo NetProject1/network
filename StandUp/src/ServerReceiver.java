@@ -7,6 +7,8 @@ import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
 
+import sun.applet.resources.MsgAppletViewer_es;
+
 public class ServerReceiver extends Thread {
 	ArrayList<User> userArray;
 	ArrayList<Room> roomArray;
@@ -15,12 +17,13 @@ public class ServerReceiver extends Thread {
 	Socket socket;
 	DBDAO dbdao=new DBDAO();
 	
+	
 	ServerReceiver(Socket socket,User user, ArrayList<User> userArray,ArrayList<Room> roomArray) {
 		this.socket = socket;
 		this.userArray=userArray;
 		this.roomArray=roomArray;
 		this.user=user;
-		//userArray.add(user);
+		
 	}
 	public void run() {
 		try {
@@ -71,12 +74,13 @@ public class ServerReceiver extends Thread {
 	} // run
 	
 	synchronized public void msgParsing(String receiveMsg){
+		System.out.println(receiveMsg);
 		 StringTokenizer token=new StringTokenizer(receiveMsg, "/"); //토큰
 		 String protocol= token.nextToken();//토큰으로 분리된 스트링
 		 String id,pw, nick;
 		 String rNum, rName, rUsers;
 		 String result;
-		 System.out.println(protocol);
+		 
 		 try{
 		 switch (protocol) {
 		
@@ -141,6 +145,11 @@ public class ServerReceiver extends Thread {
 			result=MsgProtocol.WAITROOM_CHAT+"/"+user.nickName+": "+token.nextToken();
 			loginEchoMsg(result);
 			break;
+			
+		case MsgProtocol.GAMEROOM_CHAT:
+			result=MsgProtocol.GAMEROOM_CHAT+"/"+user.nickName+": "+token.nextToken();
+			GameRoomEcho(result);
+			break;
 		case MsgProtocol.ENTERROOM:
 			rNum=token.nextToken();
 			EnterRoom(rNum);
@@ -152,11 +161,37 @@ public class ServerReceiver extends Thread {
 		case MsgProtocol.WAITROOM_UPDATE:
 			roomList();
 			userList();
+			break;
 		case MsgProtocol.ROOM_UPDATE:
 			if(user.room!=null){
 			roomUpdate(user.room.roomNumber);
 			}
+			break;
+		case MsgProtocol.CODE_GAMESTART:
+			gameStart();
+			break;
+		case MsgProtocol.CODE_CARDOPEN:
+			result=token.nextToken();
+			selecteOpenCard(result);
+			break;
+		 case MsgProtocol.CODE_CALL:
+			 betCall();
+			 break;
+		 case MsgProtocol.CODE_DOUBLE:
+			 betDouble();
+			 break;
+		 case MsgProtocol.CODE_HALF:
+			 betHalf();
+			 break;
+		 case MsgProtocol.CODE_DIE:
+			 betDie();
+			 break;
+		 case MsgProtocol.CODE_CARDSET:
+			 cardSetConfirm(token);
+			 break;
 			}
+		
+		 
 		 }catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -169,6 +204,40 @@ public class ServerReceiver extends Thread {
 		//채팅 받아왔을시
 		
 	}
+	void cardSetConfirm(StringTokenizer token){
+		String nextcard1=token.nextToken();
+		String nextcard2=token.nextToken();
+		String nextcard3=token.nextToken();
+		if(nextcard1.equals("no")){
+			user.selectedCard1=user.card2;
+			user.selectedCard2=user.card3;
+		}else if(nextcard2.equals("no")){
+			user.selectedCard1=user.card1;
+			user.selectedCard2=user.card3;
+		}else{
+			user.selectedCard1=user.card1;
+			user.selectedCard2=user.card2;
+		}
+		user.openCard=99999;
+		
+		user.isReady=true;
+		if(user.room.allPlayerReady()){
+			//패확인
+			roomUpdate(user.room.roomNumber);
+			System.out.println("패확인합니다 쿵짜리 작작");
+			
+			judge();
+			
+		}else{
+			//대기함.
+			try {
+				user.dos.writeUTF(MsgProtocol.CODE_GAMEWAIT);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	synchronized void makeRoom(String rName){
 		int rnum=0;
 		if(roomArray.size()!=0){
@@ -180,6 +249,8 @@ public class ServerReceiver extends Thread {
 		Room newRoom=new Room(rnum,rName,user);
 		roomArray.add(newRoom);
 		user.room=newRoom;
+		//게임순서 정하기
+		user.room.setPlayerOrder();
 		roomList();
 		//방 만들어졌으니 클라이언트쪽에서 게임방 ui 띄우도록 정보를 보내줌
 		try {
@@ -292,11 +363,21 @@ public class ServerReceiver extends Thread {
 		for(int i=0;i< roomArray.size(); i++){
 			if(roomArray.get(i).roomNumber==rNum){
 				selectedRoom=roomArray.get(i);
+				selectedRoom.setPlayerOrder();
 			}
 		}
+		//방정보와
 		String msg=MsgProtocol.ROOM_UPDATE+selectedRoom.GetRoomINFO();
-		//전달할 방을 찾아서
+		String SendMsg="";
+		//방장 정보
+		
+		//유저정보들
 		for(int i=0; i <selectedRoom.userArray.size() ;i++){
+			msg+=selectedRoom.roomMaster.getGameINFO(i);
+			for(int j=0; j < selectedRoom.userArray.size();j++){
+				msg+=selectedRoom.userArray.get(j).getGameINFO(i);
+			}
+			
 			try {
 				if(selectedRoom.userArray.get(i).isLogin){
 				selectedRoom.userArray.get(i).dos.writeUTF(msg);
@@ -305,8 +386,241 @@ public class ServerReceiver extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			msg=MsgProtocol.ROOM_UPDATE+selectedRoom.GetRoomINFO();
 		}
 		
 	}
+	void GameRoomEcho(String msg){
+		for(int i=0; i <user.room.userArray.size() ;i++){
+			try {
+				System.out.println(userArray.get(i).nickName+"에게 메세지를 보냅니다");
+				user.room.userArray.get(i).dos.writeUTF(msg);			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	void gameStart(){
+		//카드를 섞고 두장씩 배부
+		if(user.room.userArray.size()>=2){
+		user.room.isGameStart=true;
+		user.room.setFirstMoney();
+		user.room.setPlayersCardBack1();
+		user.room.dealCard();
+		
+		user.room.drawTwoCards();
+		
+		user.room.gameState="start";
+		String msg=MsgProtocol.CODE_GAMESTART+"/OK";
+		GameRoomEcho(msg);
+		}else{
+			String msg=MsgProtocol.CODE_GAMESTART+"/FAIL";
+			try {
+				user.dos.writeUTF(msg);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+		}
+	}
+	//카드를 오픈한다.
+	 void selecteOpenCard(String msg){
+		if(msg.equals("CARD1")){
+			user.openCard=user.card1;
+		}else if(msg.equals("CARD2")){
+			user.openCard=user.card2;
+		}
+		
+		user.isReady=true;
+		if(user.room.allPlayerReady()){
+			user.room.gameState="bet";
+			user.room.SetNotReady();
+		}
+		roomUpdate(user.room.roomNumber);
+	}
+	void betCall(){
+		user.state="call";
+		user.money-=user.room.bet;
+		user.room.amountMoney+=user.room.bet;
+		//모두 콜이거나 한명만 남고 die인지 확인한다. 
+		//모두 콜이면 2리턴,
+		//한명빼고 다이면 1리턴, 계속진행이면 0리턴,
+		if(user.room.isEndBetState()==2){
+			user.room.gameState="cardset";
+			user.room.SetNotReady();
+			
+			//3번째 카드를 안보이게 세팅한다.
+			user.room.setPlayersCardBack2();
+			//카드 1장씩 배부
+			user.room.drawOneCard();
+			//최종카드 선택 
+			String msg=MsgProtocol.CODE_CARDSET;
+			GameRoomEcho(msg);
+		}else if(user.room.isEndBetState()==1){
+			user.room.gameState="end";
+			user.room.isGameStart=false;
+			//승자 정보 패자 정보 줌.
+			try{
+			String msg;
+			for(int i=0;i< user.room.userArray.size();i++){
+				if(userArray.get(i).state.equals("die")){
+					userArray.get(i).lose+=1;
+					dbdao.updateLoseMoney(userArray.get(i).id,userArray.get(i).lose,userArray.get(i).money);
+					msg=MsgProtocol.CODE_GAMEEND+"/LOSE";
+					userArray.get(i).dos.writeUTF(msg);
+				}else{
+					userArray.get(i).money+=user.room.amountMoney;
+					userArray.get(i).win+=1;
+					dbdao.updateWinMoney(userArray.get(i).id,userArray.get(i).win,userArray.get(i).money);
+					msg=MsgProtocol.CODE_GAMEEND+"/WIN";
+					userArray.get(i).dos.writeUTF(msg);
+				}
+				//유저 게임정보를 리셋합니다
+				userArray.get(i).userReset();
+				
+			}
+			//게임방의 정보를 리셋합니다.
+			RoomUsersUpdate();	
+			user.room.roomInitilize();
+			}catch (Exception e) {
+				// TODO: handle exception
+			}
+		}else if(user.room.isEndBetState()==0){
+			user.room.setNextPlayerTurn();
+			roomUpdate(user.room.roomNumber);
+		}
 	
+	}
+	void betDouble(){
+		user.state="double";
+		user.room.bet=user.room.bet*2;
+		user.money-=user.room.bet;
+		user.room.amountMoney+=user.room.bet;
+		user.room.setNextPlayerTurn();
+		roomUpdate(user.room.roomNumber);
+	}
+	void betHalf(){
+		user.state="half";
+		user.room.bet+=user.room.amountMoney/2;
+		user.money-=user.room.bet;
+		user.room.amountMoney+=user.room.bet;
+		user.room.setNextPlayerTurn();
+		roomUpdate(user.room.roomNumber);
+	}
+	void betDie(){
+		user.state="die";
+		//모두 콜이거나 한명만 남고 die인지 확인한다.
+		if(user.room.isEndBetState()==2){
+			user.room.gameState="cardset";
+			user.room.SetNotReady();
+			
+			//3번째 카드를 안보이게 세팅한다.
+			user.room.setPlayersCardBack2();
+			//카드 1장씩 배부
+			user.room.drawOneCard();
+			//최종카드 선택 
+			String msg=MsgProtocol.CODE_CARDSET;
+			GameRoomEcho(msg);
+		}else if(user.room.isEndBetState()==1){
+			user.room.gameState="end";
+			user.room.isGameStart=false;
+			//승자 정보 패자 정보 줌.
+			try{
+			String msg;
+			for(int i=0;i< user.room.userArray.size();i++){
+				if(userArray.get(i).state.equals("die")){
+					userArray.get(i).lose+=1;
+					dbdao.updateLoseMoney(userArray.get(i).id,userArray.get(i).lose,userArray.get(i).money);
+					msg=MsgProtocol.CODE_GAMEEND+"/LOSE";
+					userArray.get(i).dos.writeUTF(msg);
+					
+				}else{
+					userArray.get(i).money+=user.room.amountMoney;
+					userArray.get(i).win+=1;
+					dbdao.updateWinMoney(userArray.get(i).id,userArray.get(i).win,userArray.get(i).money);
+					msg=MsgProtocol.CODE_GAMEEND+"/WIN";
+					userArray.get(i).dos.writeUTF(msg);
+				}
+				//유저 게임정보를 리셋합니다
+				userArray.get(i).userReset();
+				
+			}
+			RoomUsersUpdate();	
+			user.room.roomInitilize();
+			}catch (Exception e) {
+				// TODO: handle exception
+			}
+			
+		}else if(user.room.isEndBetState()==0){
+			user.room.setNextPlayerTurn();
+			roomUpdate(user.room.roomNumber);
+		}
+		
+	}
+	void judge(){
+		int winnumber=user.room.judge();
+		//1000번은 재경기이다.
+		if(winnumber!=1000){
+		user.room.gameState="end";
+		user.room.isGameStart=false;
+		//승자 정보 패자 정보 줌.
+		try{
+		String msg;
+		for(int i=0;i< user.room.userArray.size();i++){
+			if(i!=winnumber){
+				userArray.get(i).lose+=1;
+				dbdao.updateLoseMoney(userArray.get(i).id,userArray.get(i).lose,userArray.get(i).money);
+				msg=MsgProtocol.CODE_GAMEEND+"/LOSE";
+				userArray.get(i).dos.writeUTF(msg);
+				
+			}else{
+				userArray.get(i).money+=user.room.amountMoney;
+				userArray.get(i).win+=1;
+				dbdao.updateWinMoney(userArray.get(i).id,userArray.get(i).win,userArray.get(i).money);
+				msg=MsgProtocol.CODE_GAMEEND+"/WIN";
+				userArray.get(i).dos.writeUTF(msg);
+			}
+			//유저 게임정보를 리셋합니다
+			userArray.get(i).userReset();
+			
+		}
+		RoomUsersUpdate();		
+		user.room.roomInitilize();
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		}else{
+			//재경기
+			System.out.println("재경기이다");
+		}
+	}
+	void RoomUsersUpdate(){
+		for(int i=0;i <user.room.userArray.size();i++){
+			try {
+				user.room.userArray.get(i).dos.writeUTF
+				(MsgProtocol.USERUPDATE+"/"+dbdao.updateUserINFO(user.room.userArray.get(i).id));
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	void reStart(){
+		//카드를 섞고 두장씩 배부
+		user.room.isGameStart=true;
+		user.room.setFirstMoney();
+		user.room.setPlayersCardBack1();
+		user.room.dealCard();
+		
+		user.room.drawTwoCards();
+		
+		user.room.gameState="start";
+		String msg=MsgProtocol.CODE_GAMESTART+"/OK";
+		GameRoomEcho(msg);
+	
+	}
 }

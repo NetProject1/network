@@ -3,12 +3,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.LineBorder;
 
 import oracle.jrockit.jfr.JFR;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -17,6 +21,9 @@ import java.awt.BorderLayout;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.Font;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import java.awt.FlowLayout;
 
 public class GameRoomUI extends JFrame{
 	Client client;
@@ -27,11 +34,16 @@ public class GameRoomUI extends JFrame{
 	JLabel cardBackLB4;
 	private JTextField textField;
 	
+	ImageIcon[] images= new ImageIcon[21];
+	//배팅 버튼을 붙여놓는 panel
+	JPanel bettingButtonPN;
 	//player panels
 	JPanel player0PN,player1PN,player2PN,player3PN;
 	//player info panels
 	JPanel p0Info, p1Info, p2Info, p3Info;
-	
+	//배팅금액
+	JLabel bet,amoutMoney;
+	JTextArea textArea;
 	//myPlayer
 	JLabel p0Nick,p0Money,p0Card1,p0Card3,p0Card2;
 	//player 1
@@ -44,6 +56,17 @@ public class GameRoomUI extends JFrame{
 	JLabel label_3;
 	private JLabel lblBetting;
 	private JButton btnGameStart;
+	private JLabel cardSelectLB;
+	private JPanel roomInfo;
+	private JLabel winLoseLB;
+	private JLabel p1Die;
+	private JLabel p0Die;
+	private JLabel p2Die;
+	private JLabel p3Die;
+	private JLabel lblNewLabel_2;
+	private JLabel ROOMnumber;
+	private JLabel lblNewLabel_4;
+	private JLabel RoomNAME;
 	
 	/**
 	 * Launch the application.
@@ -68,6 +91,31 @@ public class GameRoomUI extends JFrame{
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		//이미지 삽입
+		
+		images[0]=new ImageIcon("img/CardBack.png");
+		images[1]=new ImageIcon("img/01.jpg");
+		images[2]=new ImageIcon("img/02.jpg");
+		images[3]=new ImageIcon("img/03.jpg");
+		images[4]=new ImageIcon("img/04.jpg");
+		images[5]=new ImageIcon("img/05.jpg");
+		images[6]=new ImageIcon("img/06.jpg");
+		images[7]=new ImageIcon("img/07.jpg");
+		images[8]=new ImageIcon("img/08.jpg");
+		images[9]=new ImageIcon("img/09.jpg");
+		images[10]=new ImageIcon("img/10.jpg");
+		images[11]=new ImageIcon("img/11.jpg");
+		images[12]=new ImageIcon("img/12.jpg");
+		images[13]=new ImageIcon("img/13.jpg");
+		images[14]=new ImageIcon("img/14.jpg");
+		images[15]=new ImageIcon("img/15.jpg");
+		images[16]=new ImageIcon("img/16.jpg");
+		images[17]=new ImageIcon("img/17.jpg");
+		images[18]=new ImageIcon("img/18.jpg");
+		images[19]=new ImageIcon("img/19.jpg");
+		images[20]=new ImageIcon("img/20.jpg");
+		
+		
 		cardHeapLB= new JLabel(new ImageIcon("img/CardHeap.png"), SwingUtilities.CENTER);
 		cardHeapLB.setSize(80, 100);
 		cardHeapLB.setLocation(400, 350);
@@ -97,43 +145,6 @@ public class GameRoomUI extends JFrame{
 		
 		getContentPane().setLayout(null);
 		
-		JButton button1 = new JButton("패 돌리기1");
-		button1.setBounds(620, 10, 97, 23);
-		getContentPane().add(button1);
-		button1.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e){
-				HandOutCard(1,3);
-			}
-		
-		});
-		
-		JButton button2 = new JButton("패 돌리기2");
-		button2.setBounds(620, 43, 97, 23);
-		getContentPane().add(button2);
-		button2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e){
-				HandOutCard(2,3);
-			}
-		
-		});
-		
-		JButton button3 = new JButton("패 돌리기3");
-		button3.setBounds(620, 76, 97, 23);
-		getContentPane().add(button3);
-		button3.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e){
-				HandOutCard(3,3);
-			}
-		
-		});
-		
-		JButton button4 = new JButton("패 돌리기4");
-		button4.setBounds(620, 109, 97, 23);
-		getContentPane().add(button4);
-		
 		JButton goWaitRoomBTN = new JButton("대기실로 나가기");
 		goWaitRoomBTN.setBounds(759, 647, 97, 23);
 		getContentPane().add(goWaitRoomBTN);
@@ -149,28 +160,53 @@ public class GameRoomUI extends JFrame{
 		getContentPane().add(player0PN);
 		player0PN.setLayout(null);
 		
-		p0Card1 = new JLabel("카드1");
+		p0Card1 = new JLabel("");
 		p0Card1.setBounds(10, 100, 80, 100);
 		player0PN.add(p0Card1);
 		
-		p0Card2 = new JLabel("카드2");
+		p0Card1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				//게임 상황이 카드선택일때.
+				client.choseCard1();
+			}
+		});
+		
+		p0Card2 = new JLabel("");
 		p0Card2.setBounds(100, 100, 80, 100);
 		player0PN.add(p0Card2);
 		
-		p0Card3 = new JLabel("카드3");
+		p0Card2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				//게임 상황이 카드선택일때.
+				client.choseCard2();
+			}
+		});
+		
+		p0Card3 = new JLabel("");
 		p0Card3.setBounds(190, 100, 80, 100);
 		player0PN.add(p0Card3);
+		
+		p0Card3.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				//게임 상황이 카드선택일때.
+				client.choseCard3();
+			}
+		});
+		
 		
 		player1PN = new JPanel();
 		player1PN.setLayout(null);
 		player1PN.setBounds(5, 300, 280, 210);
 		getContentPane().add(player1PN);
 		
-		p1Card1 = new JLabel("카드1");
+		p1Card1 = new JLabel("");
 		p1Card1.setBounds(10, 100, 80, 100);
 		player1PN.add(p1Card1);
 		
-		p1Card2 = new JLabel("카드2");
+		p1Card2 = new JLabel("");
 		p1Card2.setBounds(100, 100, 80, 100);
 		player1PN.add(p1Card2);
 		
@@ -179,11 +215,11 @@ public class GameRoomUI extends JFrame{
 		player2PN.setBounds(300, 10, 280, 210);
 		getContentPane().add(player2PN);
 		
-		p2Card1 = new JLabel("카드1");
+		p2Card1 = new JLabel("");
 		p2Card1.setBounds(10, 100, 80, 100);
 		player2PN.add(p2Card1);
 		
-		p2Card2 = new JLabel("카드2");
+		p2Card2 = new JLabel("");
 		p2Card2.setBounds(100, 100, 80, 100);
 		player2PN.add(p2Card2);
 		
@@ -192,11 +228,11 @@ public class GameRoomUI extends JFrame{
 		player3PN.setBounds(600, 300, 280, 210);
 		getContentPane().add(player3PN);
 		
-		 p3Card1 = new JLabel("카드1");
+		 p3Card1 = new JLabel("");
 		p3Card1.setBounds(10, 100, 80, 100);
 		player3PN.add(p3Card1);
 		
-		 p3Card2 = new JLabel("카드2");
+		 p3Card2 = new JLabel("");
 		p3Card2.setBounds(100, 100, 80, 100);
 		player3PN.add(p3Card2);
 		
@@ -219,9 +255,16 @@ public class GameRoomUI extends JFrame{
 		p0Money = new JLabel("");
 		p0Money.setBounds(87, 44, 181, 15);
 		p0Info.add(p0Money);
+		
+		p0Die = new JLabel("다이!");
+		p0Die.setHorizontalAlignment(SwingConstants.CENTER);
+		p0Die.setForeground(new Color(204, 0, 0));
+		p0Die.setFont(new Font("Gulim", Font.PLAIN, 53));
+		p0Die.setBounds(0, 0, 293, 203);
+		player0PN.add(p0Die);
 		player1PN.setOpaque(false);
 		
-		p1Card3 = new JLabel("카드3");
+		p1Card3 = new JLabel("");
 		p1Card3.setBounds(190, 100, 80, 100);
 		player1PN.add(p1Card3);
 		
@@ -242,9 +285,16 @@ public class GameRoomUI extends JFrame{
 		p1Money = new JLabel("");
 		p1Money.setBounds(87, 44, 181, 15);
 		p1Info.add(p1Money);
+		
+		p1Die = new JLabel("다이!");
+		p1Die.setForeground(new Color(204, 0, 0));
+		p1Die.setHorizontalAlignment(SwingConstants.CENTER);
+		p1Die.setFont(new Font("Gulim", Font.PLAIN, 53));
+		p1Die.setBounds(0, 0, 293, 203);
+		player1PN.add(p1Die);
 		player2PN.setOpaque(false);
 		
-		p2Card3 = new JLabel("카드3");
+		p2Card3 = new JLabel("");
 		p2Card3.setBounds(190, 100, 80, 100);
 		player2PN.add(p2Card3);
 		
@@ -265,9 +315,16 @@ public class GameRoomUI extends JFrame{
 		p2Money = new JLabel("");
 		p2Money.setBounds(87, 44, 181, 15);
 		p2Info.add(p2Money);
+		
+		p2Die = new JLabel("다이!");
+		p2Die.setHorizontalAlignment(SwingConstants.CENTER);
+		p2Die.setForeground(new Color(204, 0, 0));
+		p2Die.setFont(new Font("Gulim", Font.PLAIN, 53));
+		p2Die.setBounds(0, 0, 293, 203);
+		player2PN.add(p2Die);
 		player3PN.setOpaque(false);
 		
-		 p3Card3 = new JLabel("카드3");
+		 p3Card3 = new JLabel("");
 		 p3Card3.setBounds(190, 100, 80, 100);
 		 player3PN.add(p3Card3);
 		 
@@ -288,7 +345,19 @@ public class GameRoomUI extends JFrame{
 		 p3Money = new JLabel("");
 		 p3Money.setBounds(87, 44, 181, 15);
 		 p3Info.add(p3Money);
+		 
+		 p3Die = new JLabel("다이!");
+		 p3Die.setHorizontalAlignment(SwingConstants.CENTER);
+		 p3Die.setForeground(new Color(204, 0, 0));
+		 p3Die.setFont(new Font("Gulim", Font.PLAIN, 53));
+		 p3Die.setBounds(0, 0, 293, 203);
+		 player3PN.add(p3Die);
 		
+		 p0Die.setVisible(false);
+		 p1Die.setVisible(false);
+		 p2Die.setVisible(false);
+		 p3Die.setVisible(false);
+		 
 		JPanel roomChatPN = new JPanel();
 		roomChatPN.setBounds(0, 600, 241, 210);
 		getContentPane().add(roomChatPN);
@@ -301,53 +370,154 @@ public class GameRoomUI extends JFrame{
 		textField = new JTextField();
 		panel_1.add(textField, BorderLayout.CENTER);
 		textField.setColumns(10);
+		textField.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				msgSubmit();
+			}
+		});
 		
 		JButton btnNewButton = new JButton("발신");
 		panel_1.add(btnNewButton, BorderLayout.EAST);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setEditable(false);
-		roomChatPN.add(textArea, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane();
+		roomChatPN.add(scrollPane, BorderLayout.CENTER);
 		
-		JPanel bettingButtonPN = new JPanel();
+		textArea = new JTextArea();
+		textArea.setLineWrap(true);
+		textArea.setEditable(false);
+		scrollPane.setViewportView(textArea);
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			 public void mouseClicked(MouseEvent evt) {				
+				msgSubmit();
+
+			 }
+		});
+		
+		bettingButtonPN = new JPanel();
 		bettingButtonPN.setBounds(640, 685, 230, 114);
 		getContentPane().add(bettingButtonPN);
 		bettingButtonPN.setLayout(null);
 		
-		JButton btnNewButton_1 = new JButton("콜");
-		btnNewButton_1.setToolTipText("전 사람이 배팅한 만큼 배팅합니다.");
-		btnNewButton_1.setBounds(12, 48, 97, 23);
-		bettingButtonPN.add(btnNewButton_1);
+		JButton callBTN = new JButton("콜");
+	
+		callBTN.setToolTipText("전 사람이 배팅한 만큼 배팅합니다.");
+		callBTN.setBounds(12, 48, 97, 23);
+		bettingButtonPN.add(callBTN);
 		
-		JButton btnNewButton_2 = new JButton("더블");
-		btnNewButton_2.setToolTipText("전 사람이 배팅한 금액의 두배를 배팅합니다.");
-		btnNewButton_2.setBounds(121, 48, 97, 23);
-		bettingButtonPN.add(btnNewButton_2);
+		JButton doubleBTN = new JButton("더블");
+		doubleBTN.setToolTipText("전 사람이 배팅한 금액의 두배를 배팅합니다.");
+		doubleBTN.setBounds(121, 48, 97, 23);
+		bettingButtonPN.add(doubleBTN);
 		
-		JButton btnNewButton_3 = new JButton("하프");
-		btnNewButton_3.setToolTipText("현재 걸린 금액의 절반을 배팅합니다.");
-		btnNewButton_3.setBounds(12, 81, 97, 23);
-		bettingButtonPN.add(btnNewButton_3);
+		JButton halfBTN = new JButton("하프");
+		halfBTN.setToolTipText("현재 걸린 금액의 절반을 배팅합니다.");
+		halfBTN.setBounds(12, 81, 97, 23);
+		bettingButtonPN.add(halfBTN);
 		
-		JButton btnNewButton_4 = new JButton("다이");
-		btnNewButton_4.setToolTipText("이번 판 배팅을 포기합니다.");
-		btnNewButton_4.setBounds(121, 81, 97, 23);
-		bettingButtonPN.add(btnNewButton_4);
+		JButton dieBTN = new JButton("다이");
+		dieBTN.setToolTipText("이번 판 배팅을 포기합니다.");
+		dieBTN.setBounds(121, 81, 97, 23);
+		bettingButtonPN.add(dieBTN);
+		
+		//버튼들에 달린 이벤트 리스너들추가
+		
+		callBTN.addMouseListener(new MouseAdapter() {
+			 public void mouseClicked(MouseEvent evt) {				
+					client.betMoney("call");
+				 }
+		});
+		doubleBTN.addMouseListener(new MouseAdapter() {
+			 public void mouseClicked(MouseEvent evt) {				
+				 client.betMoney("double");
+				 }
+		});
+		halfBTN.addMouseListener(new MouseAdapter() {
+			 public void mouseClicked(MouseEvent evt) {				
+				 client.betMoney("half");
+				 }
+		});
+		dieBTN.addMouseListener(new MouseAdapter() {
+			 public void mouseClicked(MouseEvent evt) {				
+				 client.betMoney("die");
+				 }
+		});
+		
+		
+		
 		
 		lblBetting = new JLabel("betting");
 		lblBetting.setBounds(90, 10, 57, 15);
 		bettingButtonPN.add(lblBetting);
 		
-		btnGameStart = new JButton("Game Start");
-		btnGameStart.setBounds(650, 647, 97, 23);
-		getContentPane().add(btnGameStart);
-		button4.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e){
-				HandOutCard(4,3);
-			}
+		bettingButtonPN.setVisible(false);
 		
+		btnGameStart = new JButton("Game Start");
+		btnGameStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					client.user.dos.writeUTF(MsgProtocol.CODE_GAMESTART);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
 		});
+		btnGameStart.setBounds(650, 647, 97, 23);
+		btnGameStart.setVisible(false);
+		getContentPane().add(btnGameStart);
+		
+		JLabel lblNewLabel = new JLabel("배팅 액수:");
+		lblNewLabel.setBounds(326, 269, 69, 23);
+		getContentPane().add(lblNewLabel);
+		
+		bet = new JLabel("0");
+		bet.setBounds(400, 273, 57, 15);
+		getContentPane().add(bet);
+		
+		JLabel lblNewLabel_1 = new JLabel("총 금액 :");
+		lblNewLabel_1.setBounds(326, 306, 57, 15);
+		getContentPane().add(lblNewLabel_1);
+		
+		amoutMoney = new JLabel("0");
+		amoutMoney.setBounds(400, 306, 57, 15);
+		getContentPane().add(amoutMoney);
+		
+		cardSelectLB = new JLabel("공개할 카드를 선택하세요!");
+		cardSelectLB.setBounds(300, 541, 280, 47);
+		getContentPane().add(cardSelectLB);
+		cardSelectLB.setFont(new Font("Gulim", Font.BOLD, 14));
+		cardSelectLB.setForeground(Color.RED);
+		
+		roomInfo = new JPanel();
+		roomInfo.setBounds(12, 30, 241, 65);
+		getContentPane().add(roomInfo);
+		roomInfo.setLayout(null);
+		
+		lblNewLabel_2 = new JLabel("방 번호:");
+		lblNewLabel_2.setBounds(12, 10, 57, 15);
+		roomInfo.add(lblNewLabel_2);
+		
+		ROOMnumber = new JLabel("New label");
+		ROOMnumber.setBounds(81, 10, 148, 15);
+		roomInfo.add(ROOMnumber);
+		
+		lblNewLabel_4 = new JLabel("방 제목:");
+		lblNewLabel_4.setBounds(12, 35, 57, 15);
+		roomInfo.add(lblNewLabel_4);
+		
+		RoomNAME = new JLabel("New label");
+		RoomNAME.setBounds(81, 35, 148, 15);
+		roomInfo.add(RoomNAME);
+		
+		winLoseLB = new JLabel("승리!!");
+		winLoseLB.setForeground(new Color(255, 204, 0));
+		winLoseLB.setHorizontalAlignment(SwingConstants.CENTER);
+		winLoseLB.setFont(new Font("Gulim", Font.BOLD | Font.ITALIC, 47));
+		winLoseLB.setBounds(326, 245, 230, 177);
+		getContentPane().add(winLoseLB);
+		
+		winLoseLB.setVisible(false);
+		cardSelectLB.setVisible(false);
 		
 		setVisible(true);
 		
@@ -356,38 +526,228 @@ public class GameRoomUI extends JFrame{
 	}
 	@Override
 	public void paint(Graphics g) {
-		// TODO Auto-generated method stub
 		super.paint(g);
 	}
 	public void roomUpdate(){
-
+		RoomNAME.setText(client.user.room.roomName);
+		ROOMnumber.setText(Integer.toString(client.user.room.roomNumber));
+		bet.setText(Integer.toString(client.user.room.bet));
+		amoutMoney.setText(Integer.toString(client.user.room.amountMoney));
+		int n = client.user.playerNumber;
+		
+		//정보를 지웠다가 다시 그림
 		p0Nick.setText(" ");
 		p0Money.setText("");
+		p0Card1.setIcon(null);	
+		p0Card2.setIcon(null);
+		p0Card3.setIcon(null);
 		
 		p1Nick.setText(" ");
 		p1Money.setText("");
+		p1Card1.setIcon(null);
+		p1Card2.setIcon(null);
+		p1Card3.setIcon(null);
 		
 		p2Nick.setText(" ");
 		p2Money.setText("");
-		
+		p2Card1.setIcon(null);
+		p2Card2.setIcon(null);
+		p2Card3.setIcon(null);	
 		p3Nick.setText(" ");
 		p3Money.setText("");
+		p3Card1.setIcon(null);
+		p3Card2.setIcon(null);
+		p3Card3.setIcon(null);
+		
+		p0Die.setVisible(false);
+		p1Die.setVisible(false);
+		p2Die.setVisible(false);
+		p3Die.setVisible(false);
+		
+	
+		//유저가 n번째일때 오른쪽에는 n+3 %4 번이 위치 왼쪽에는 n+1 %4번이 위치
+		
+		
+		
+		//게임 시작하기 전만 보인다.
+		btnGameStart.setVisible(false);
+		//게임 시작시
+		if(client.user.room.gameState.equals("start")){
+			if(!client.user.isReady){
 
+			cardSelectLB.setText("공개할 카드를 선택하세요!");
+			cardSelectLB.setVisible(true);
+			}else{
+				cardSelectLB.setVisible(false);
+			}
+			bettingButtonPN.setVisible(false);
+			//배팅시
+		}else if(client.user.room.gameState.equals("bet")){
+			cardSelectLB.setVisible(false);
+			bettingButtonPN.setVisible(true);
+				if(client.user.room.playerturn== n){
+					player0PN.setBorder(new LineBorder(new Color(204, 255, 0), 4, true));
+					player1PN.setBorder(null);
+					player2PN.setBorder(null);
+					player3PN.setBorder(null);
+				}else if(client.user.room.playerturn== (n+1)%4 ){
+					bettingButtonPN.setVisible(false);
+					player1PN.setBorder(new LineBorder(new Color(204, 255, 0), 4, true));
+					player0PN.setBorder(null);
+					player2PN.setBorder(null);
+					player3PN.setBorder(null);
+				}else if(client.user.room.playerturn== (n+2)%4 ){
+					bettingButtonPN.setVisible(false);
+					player2PN.setBorder(new LineBorder(new Color(204, 255, 0), 4, true));
+					player1PN.setBorder(null);
+					player0PN.setBorder(null);
+					player3PN.setBorder(null);
+				}else if(client.user.room.playerturn== (n+3)%4 ){
+					bettingButtonPN.setVisible(false);
+					player3PN.setBorder(new LineBorder(new Color(204, 255, 0), 4, true));
+					player1PN.setBorder(null);
+					player2PN.setBorder(null);
+					player0PN.setBorder(null);
+				}
+				//최종카드 선택시
+			}else if(client.user.room.gameState.equals("cardset")){
+				if(!client.user.state.equals("die")){
+				//최종패를 선택하세요
+				cardSelectLB.setVisible(true);
+				cardSelectLB.setText("최종 패 두 장을 선택하세요!");
+				bettingButtonPN.setVisible(false);
+				player3PN.setBorder(null);
+				player1PN.setBorder(null);
+				player2PN.setBorder(null);
+				player0PN.setBorder(null);
+				p0Card1.setBorder(null);
+				p0Card2.setBorder(null);
+				p0Card3.setBorder(null);
+				}
+				
+			}else if(client.user.room.gameState.equals("end")){
+				bettingButtonPN.setVisible(false);
+				cardSelectLB.setVisible(false);
+				player3PN.setBorder(null);
+				player1PN.setBorder(null);
+				player2PN.setBorder(null);
+				player0PN.setBorder(null);
+				p0Card1.setBorder(null);
+				p0Card2.setBorder(null);
+				p0Card3.setBorder(null);
+			}else{
+				if(client.user.equals(client.user.room.roomMaster)){
+					btnGameStart.setVisible(true);
+				}
+				bettingButtonPN.setVisible(false);
+				cardSelectLB.setVisible(false);
+				player3PN.setBorder(null);
+				player1PN.setBorder(null);
+				player2PN.setBorder(null);
+				player0PN.setBorder(null);
+				p0Card1.setBorder(null);
+				p0Card2.setBorder(null);
+				p0Card3.setBorder(null);
+				p1Card1.setBorder(null);
+				p1Card2.setBorder(null);
+				p1Card3.setBorder(null);
+				p2Card1.setBorder(null);
+				p2Card2.setBorder(null);
+				p2Card3.setBorder(null);
+				p3Card1.setBorder(null);
+				p3Card2.setBorder(null);
+				p3Card3.setBorder(null);
+			}
+		
 		//수정 요함. 룸정보를 계속 업데이트한다.
 		for(int i=0; i< client.user.room.userArray.size();i++){
-			if(i==0){
+			
+			if(client.user.room.userArray.get(i).playerNumber == n){
 				p0Nick.setText(client.user.room.userArray.get(i).nickName);		
 				p0Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
-			}else if(i==1){
+				if(client.user.room.userArray.get(i).card1 != 99999){
+					p0Card1.setIcon(images[client.user.room.userArray.get(i).card1]);
+				}else{
+					p0Card1.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).card2 != 99999){
+					p0Card2.setIcon(images[client.user.room.userArray.get(i).card2]);
+				}else{
+					p0Card2.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).card3 != 99999){
+					p0Card3.setIcon(images[client.user.room.userArray.get(i).card3]);
+				}else{
+					p0Card3.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).state.equals("die")){
+					p0Die.setVisible(true);
+				}
+			}else if(client.user.room.userArray.get(i).playerNumber == ((n+1)%4)){
 				p1Nick.setText(client.user.room.userArray.get(i).nickName);
 				p1Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
-			}else if(i==2){
+				if(client.user.room.userArray.get(i).card1 != 99999){
+					p1Card1.setIcon(images[client.user.room.userArray.get(i).card1]);
+				}else{
+					p1Card1.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).card2 != 99999){
+					p1Card2.setIcon(images[client.user.room.userArray.get(i).card2]);
+				}else{
+					p1Card2.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).card3 != 99999){
+					p1Card3.setIcon(images[client.user.room.userArray.get(i).card3]);
+				}else{
+					p1Card3.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).state.equals("die")){
+					p1Die.setVisible(true);
+				}
+			}else if(client.user.room.userArray.get(i).playerNumber == ((n+2)%4)){
 				p2Nick.setText(client.user.room.userArray.get(i).nickName);
 				p2Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
-			}else if(i==3){
+				if(client.user.room.userArray.get(i).card1 != 99999){
+					p2Card1.setIcon(images[client.user.room.userArray.get(i).card1]);
+				}else{
+					p2Card1.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).card2 != 99999){
+					p2Card2.setIcon(images[client.user.room.userArray.get(i).card2]);
+				}else{
+					p2Card2.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).card3 != 99999){
+					p2Card3.setIcon(images[client.user.room.userArray.get(i).card3]);
+				}else{
+					p2Card3.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).state.equals("die")){
+					p2Die.setVisible(true);
+				}
+			}else if(client.user.room.userArray.get(i).playerNumber == ((n+3)%4)){
 				p3Nick.setText(client.user.room.userArray.get(i).nickName);
-				p3Money.setText(Integer.toString(client.user.room.userArray.get(i).money));;
+				p3Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
+				if(client.user.room.userArray.get(i).card1 != 99999){
+					p3Card1.setIcon(images[client.user.room.userArray.get(i).card1]);
+				}else{
+					p3Card1.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).card2 != 99999){
+					p3Card2.setIcon(images[client.user.room.userArray.get(i).card2]);
+				}else{
+					p3Card2.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).card3 != 99999){
+					p3Card3.setIcon(images[client.user.room.userArray.get(i).card3]);
+				}else{
+					p3Card3.setIcon(null);
+				}
+				if(client.user.room.userArray.get(i).state.equals("die")){
+					p3Die.setVisible(true);
+				}
 			}
+					
 		}
 	}
 	//카드를 나눠주는 애니메이션 재생 (playerNumber 나눠줄 플레이어번호, numcard 몇장 나눠줄지)
@@ -397,10 +757,10 @@ public class GameRoomUI extends JFrame{
 				
 				int repeat=0;
 				while(true){
-					if(playerNumber==4){
-						cardBackLB1.setLocation(cardBackLB1.getLocation().x+7, cardBackLB1.getLocation().y);
-						if(cardBackLB1.getLocation().x >=600){
-							cardBackLB1.setLocation(345, 330);
+					if(playerNumber==3){
+						cardBackLB1.setLocation(cardBackLB1.getLocation().x+10, cardBackLB1.getLocation().y);
+						if(cardBackLB1.getLocation().x >=800){
+							cardBackLB1.setLocation(400, 350);
 							repeat+=1;
 							if(repeat>=numCard){
 								break;
@@ -412,25 +772,10 @@ public class GameRoomUI extends JFrame{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					}else if(playerNumber==3){
-						cardBackLB2.setLocation(cardBackLB2.getLocation().x, (cardBackLB2.getLocation().y)-7);
-						if(cardBackLB2.getLocation().y <=10){
-							cardBackLB2.setLocation(345, 330);
-							repeat+=1;
-							if(repeat>=numCard){
-							break;
-							}
-						}
-						try {
-							Thread.sleep(10);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
 					}else if(playerNumber==2){
-						cardBackLB3.setLocation(cardBackLB3.getLocation().x-7, cardBackLB3.getLocation().y);
-						if(cardBackLB3.getLocation().x <=10){
-							cardBackLB3.setLocation(345, 330);
+						cardBackLB2.setLocation(cardBackLB2.getLocation().x, (cardBackLB2.getLocation().y)-10);
+						if(cardBackLB2.getLocation().y <=10){
+							cardBackLB2.setLocation(400, 350);
 							repeat+=1;
 							if(repeat>=numCard){
 							break;
@@ -443,9 +788,24 @@ public class GameRoomUI extends JFrame{
 							e.printStackTrace();
 						}
 					}else if(playerNumber==1){
-						cardBackLB4.setLocation(cardBackLB4.getLocation().x, (cardBackLB4.getLocation().y)+7);
-						if(cardBackLB4.getLocation().y >=600){
-							cardBackLB4.setLocation(345, 330);
+						cardBackLB3.setLocation(cardBackLB3.getLocation().x-10, cardBackLB3.getLocation().y);
+						if(cardBackLB3.getLocation().x <=10){
+							cardBackLB3.setLocation(400, 350);
+							repeat+=1;
+							if(repeat>=numCard){
+							break;
+							}
+						}
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}else if(playerNumber==0){
+						cardBackLB4.setLocation(cardBackLB4.getLocation().x, (cardBackLB4.getLocation().y)+10);
+						if(cardBackLB4.getLocation().y >=700){
+							cardBackLB4.setLocation(400, 350);
 							repeat+=1;
 							if(repeat>=numCard){
 							break;
@@ -461,5 +821,93 @@ public class GameRoomUI extends JFrame{
 				}
 			}
 		}.start();
+	}
+	void msgSubmit(){
+		try {
+			client.dos.writeUTF(MsgProtocol.GAMEROOM_CHAT+"/"+textField.getText());
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			textField.setText("");
+		}
+		
+		textField.setText("");
+	}
+	void gameStart(){
+		try {
+			client.dos.writeUTF(MsgProtocol.CODE_GAMESTART);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	void DrawTwoCard(){
+		int n=client.user.room.userArray.size();
+		for(int i=0;i < n;i++){
+			//다이인놈은 안주게해야함;
+			//수정
+			HandOutCard(i, 2);
+			try {
+				Thread.sleep(40);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	void setSelectedCard1(boolean t){
+		if(t){
+			p0Card1.setBorder(new LineBorder(new Color(204, 255, 0), 4, true));
+		}else{
+			p0Card1.setBorder(null);
+		}
+	}
+	void setSelectedCard2(boolean t){
+		if(t){
+			p0Card2.setBorder(new LineBorder(new Color(204, 255, 0), 4, true));
+		}else{
+			p0Card2.setBorder(null);
+		}
+	}
+	void setSelectedCard3(boolean t){
+		if(t){
+			p0Card3.setBorder(new LineBorder(new Color(204, 255, 0), 4, true));
+		}else{
+			p0Card3.setBorder(null);
+		}
+	}
+	void winAnimate(){
+		new Thread(){	
+			public void run() {
+				winLoseLB.setVisible(true);
+				winLoseLB.setText("승리!!!");
+				try {
+					Thread.sleep(4000);
+					winLoseLB.setVisible(false);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}.start();
+	
+	}
+	void loseAnimate(){
+		new Thread(){	
+			public void run() {
+				winLoseLB.setVisible(true);
+				winLoseLB.setText("패배!!!");
+				try {
+					Thread.sleep(4000);
+					winLoseLB.setVisible(false);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}.start();
+	
 	}
 }
