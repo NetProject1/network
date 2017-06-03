@@ -32,5 +32,6 @@ public class MsgProtocol {
 	public static final String CODE_WIN = "GAMEWIN";
 	public static final String CODE_LOSE = "GAMELOSE";
 	public static final String CODE_GAMEEND = "GAMEEND";
-	
+
+	public static final String CODESTOPGAME="GAMESTOP";
 }

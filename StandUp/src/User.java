@@ -68,6 +68,7 @@ public class User {
 		openCard=99999;
 		selectedCard1=99999;
 		selectedCard2=99999;
+		isReady=false;
 		cardValue=0;
 		state="idle";
 	}

@@ -17,6 +17,7 @@ public class LoginUI extends JFrame{
 	private JPasswordField pwFD;
 	private JTextField ipFD;
 	JLabel ServerAccessLB;
+	JButton serverBTN;
 	
 	//회원가입
 	SignUpUI sign=null;
@@ -94,7 +95,7 @@ public class LoginUI extends JFrame{
 		//처음시작시 정해져있는 ip를 보여줌
 		ipFD.setText(client.IP);
 		
-		JButton serverBTN = new JButton("서버 접속");
+		serverBTN = new JButton("서버 접속");
 		serverBTN.setBounds(293, 84, 142, 23);
 		getContentPane().add(serverBTN);
 		
@@ -149,9 +150,11 @@ public class LoginUI extends JFrame{
 	}
 	void serverAccessConfirm(){
 		ServerAccessLB.setText("서버에 접속했습니다.");
+		serverBTN.setVisible(false);
 	}
 	void serverAccessFailed(){
 		ServerAccessLB.setText("서버에 접속하지 않았습니다.");
+		serverBTN.setVisible(true);
 	}
 	void closeSignUpUI(){
 		if(sign!=null){

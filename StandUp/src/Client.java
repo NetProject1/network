@@ -10,7 +10,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 public class Client implements Runnable {
-	static int PORT=7879; //서버 포트
+	static int PORT=9977; //서버 포트
 	static String IP="111.111.111.111"; //서버 아이피
 	
 	Socket socket; //서버와 접속할 소켓
@@ -72,6 +72,16 @@ public class Client implements Runnable {
 				e.printStackTrace();
 				try{
 					System.out.println("서버가 종료되었습니다.");
+					if(gameroom!=null){
+						gameroom.dispose();
+					}
+					if(waitRoom!=null){
+						waitRoom.dispose();
+					}
+					if(login!=null){
+						login.serverAccessFailed();
+					}
+					
 					dis.close();
 					dos.close();
 					socket.close();
@@ -250,6 +260,10 @@ public class Client implements Runnable {
 			user.win=Integer.parseInt(token.nextToken());
 			user.lose=Integer.parseInt(token.nextToken());
 			break;
+		case MsgProtocol.CODESTOPGAME:
+			result=token.nextToken();
+			JOptionPane.showMessageDialog(null, result);
+			user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
 		}
 		 
 		 }catch (Exception e) {
@@ -528,6 +542,9 @@ public class Client implements Runnable {
 							user.dos.writeUTF(MsgProtocol.CODE_CARDSET+"/"+card1
 									+"/"+card2+"/"+card3);
 							user.isReady=true;
+							card1select=false;
+							card2select=false;
+							card3select=false;
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -579,6 +596,9 @@ public class Client implements Runnable {
 							user.dos.writeUTF(MsgProtocol.CODE_CARDSET+"/"+card1
 									+"/"+card2+"/"+card3);
 							user.isReady=true;
+							card1select=false;
+							card2select=false;
+							card3select=false;
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -624,6 +644,9 @@ public class Client implements Runnable {
 						user.dos.writeUTF(MsgProtocol.CODE_CARDSET+"/"+card1
 								+"/"+card2+"/"+card3);
 						user.isReady=true;
+						card1select=false;
+						card2select=false;
+						card3select=false;
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

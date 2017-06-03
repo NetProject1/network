@@ -54,8 +54,23 @@ public class ServerReceiver extends Thread {
 								user.room.userArray.remove(user);
 							}
 						}else{
-							//게임 강제종료시
-							
+							if(user.room.roomMaster.equals(user)){
+								if(user.room.passMaster()==1){
+									user.room.userArray.remove(user);
+								}else{
+									roomArray.remove(user.room);								
+								}
+							}else{
+								user.room.userArray.remove(user);
+							}
+							//게임 초기화 한후 유저 정보를 제거
+							for(int i=0;i<user.room.userArray.size();i++){
+								user.room.userArray.get(i).userReset();
+							}
+							user.room.roomInitilize();
+							String msg=MsgProtocol.CODESTOPGAME;
+							msg+="/"+user.nickName+"님이 강제 종료하셨습니다. 게임을 재시작합니다.";
+							GameRoomEcho(msg);
 						}
 					}
 				
@@ -599,6 +614,7 @@ public class ServerReceiver extends Thread {
 		}else{
 			//재경기
 			System.out.println("재경기이다");
+			GooSaReStart();
 		}
 	}
 	void RoomUsersUpdate(){
@@ -616,14 +632,13 @@ public class ServerReceiver extends Thread {
 	//구사시 재시작
 	void GooSaReStart(){
 		//카드를 섞고 두장씩 배부
-
-		user.room.setPlayersCardBack1();
 		for(int i=0; i< user.room.userArray.size();i++){
 			if(!user.room.userArray.get(i).state.equals("die")){
 			  user.room.userArray.get(i).userRestart();
 			}
 		}
-		
+		user.room.cardPoint=0;
+		user.room.setPlayersCardBack1();
 		user.room.dealCard();
 		
 		user.room.drawTwoCards();
