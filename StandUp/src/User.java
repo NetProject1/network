@@ -61,6 +61,16 @@ public class User {
 		
 		return str;
 	}
+	void userRestart(){
+		card1=99999;
+		card2=99999;
+		card3=99999;
+		openCard=99999;
+		selectedCard1=99999;
+		selectedCard2=99999;
+		cardValue=0;
+		state="idle";
+	}
 	void userReset(){
 		//게임에 필요한 변수들
 		playerNumber=99999;

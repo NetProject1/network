@@ -10,8 +10,8 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 public class Client implements Runnable {
-	static int PORT=7777; //서버 포트
-	static String IP="192.168.219.195"; //서버 아이피
+	static int PORT=7879; //서버 포트
+	static String IP="111.111.111.111"; //서버 아이피
 	
 	Socket socket; //서버와 접속할 소켓
 	DataInputStream dis; // 입출력 스트림
