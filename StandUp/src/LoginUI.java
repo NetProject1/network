@@ -1,5 +1,7 @@
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -63,6 +65,19 @@ public class LoginUI extends JFrame{
 		pwFD.setBounds(146, 171, 116, 21);
 		getContentPane().add(pwFD);
 		
+		pwFD.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LoginSubmit();
+			}
+		});
+		
+		idFD.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LoginSubmit();
+			}
+		});
 		//로그인 버튼
 		JButton loginBTN = new JButton("로그인");
 		loginBTN.setBounds(293, 128, 97, 23);
@@ -82,6 +97,8 @@ public class LoginUI extends JFrame{
 		idLB.setBounds(58, 132, 76, 15);
 		getContentPane().add(idLB);
 		
+		
+		
 		JLabel pwLB = new JLabel("비밀번호 :");
 		pwLB.setBounds(58, 174, 76, 15);
 		getContentPane().add(pwLB);
@@ -96,6 +113,8 @@ public class LoginUI extends JFrame{
 		ipFD.setColumns(10);
 		//처음시작시 정해져있는 ip를 보여줌
 		ipFD.setText(client.IP);
+		
+	
 		
 		serverBTN = new JButton("서버 접속");
 		serverBTN.setBounds(293, 84, 142, 23);

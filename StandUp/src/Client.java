@@ -286,6 +286,9 @@ public class Client implements Runnable {
 			ExitRoom();
 			JOptionPane.showMessageDialog(null, "돈이 부족하여 게임에 참가 할 수 없습니다.");
 			break;
+		case MsgProtocol.CODE_GAMEWAIT:
+			gameroom.setWaitLabel(true);
+			break;
 		}
 		 
 		 }catch (Exception e) {
@@ -563,6 +566,18 @@ public class Client implements Runnable {
 							
 							user.dos.writeUTF(MsgProtocol.CODE_CARDSET+"/"+card1
 									+"/"+card2+"/"+card3);
+							if(card1select){
+								if(card2select){
+									user.selectedCard1=user.card1;
+									user.selectedCard2=user.card2;
+								}else{
+									user.selectedCard1=user.card1;
+									user.selectedCard2=user.card3;
+								}
+							}else{
+								user.selectedCard1=user.card2;
+								user.selectedCard2=user.card3;
+							}
 							user.isReady=true;
 							card1select=false;
 							card2select=false;
@@ -617,6 +632,18 @@ public class Client implements Runnable {
 							
 							user.dos.writeUTF(MsgProtocol.CODE_CARDSET+"/"+card1
 									+"/"+card2+"/"+card3);
+							if(card1select){
+								if(card2select){
+									user.selectedCard1=user.card1;
+									user.selectedCard2=user.card2;
+								}else{
+									user.selectedCard1=user.card1;
+									user.selectedCard2=user.card3;
+								}
+							}else{
+								user.selectedCard1=user.card2;
+								user.selectedCard2=user.card3;
+							}
 							user.isReady=true;
 							card1select=false;
 							card2select=false;
@@ -665,10 +692,23 @@ public class Client implements Runnable {
 						
 						user.dos.writeUTF(MsgProtocol.CODE_CARDSET+"/"+card1
 								+"/"+card2+"/"+card3);
+						if(card1select){
+							if(card2select){
+								user.selectedCard1=user.card1;
+								user.selectedCard2=user.card2;
+							}else{
+								user.selectedCard1=user.card1;
+								user.selectedCard2=user.card3;
+							}
+						}else{
+							user.selectedCard1=user.card2;
+							user.selectedCard2=user.card3;
+						}
 						user.isReady=true;
 						card1select=false;
 						card2select=false;
 						card3select=false;
+						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

@@ -245,7 +245,6 @@ public class ServerReceiver extends Thread {
 		if(user.room.allPlayerReady()){
 			//패확인
 			roomUpdate(user.room.roomNumber);
-			System.out.println("패확인합니다 쿵짜리 작작");
 			try {
 				Thread.sleep(4000);
 			} catch (InterruptedException e) {

@@ -20,7 +20,7 @@ public class Room {
 	int playerturn=0;
 	
 	//족보 저장
-	int[][] priority =new int[21][21];;
+	int[][] priority =new int[21][21];
 	
 	String gameState="idle";
 	
@@ -230,19 +230,24 @@ public class Room {
 		cardPoint=0;
 	}
 	public void setPriority() {
-		priority[13][18] = Integer.MAX_VALUE; //38광땡
-		priority[11][13] = 10000; //13광땡
-		priority[11][18] = 10000; //18광땡
-
-		for (int i = 1; i <= 10; i++) {
-			for (int j = 11; j <= 20; j++) {
-				int num = (i+j)%10;
-				priority[i][j] = num; // 끗
-				if((i+10)==j){
-					priority[i][j] = priority[i][j]+1000; // 땡
+		
+		for(int i=1;i<=19;i ++){
+			for (int j = 1; j <= 20; j++) {
+				if(i<=j){
+					int num = (i+j)%10;
+					priority[i][j] = num; // 끗
+					if((i+10)==j){
+						priority[i][j] = priority[i][j]+1000; // 땡
+					}	
 				}
 			}
 		}
+		
+		priority[13][18] = Integer.MAX_VALUE; //38광땡
+		priority[11][13] = 10000; //13광땡
+		priority[11][18] = 10000; //18광땡
+		
+		//10땡
 		priority[10][20] = priority[10][20]+1100;
 		//알리1,2
 		priority[1][12] = priority[1][12] + 900;
@@ -265,20 +270,31 @@ public class Room {
 		priority[4][16] = priority[4][16] + 600;
 		priority[14][16] = priority[14][16] + 600;
 		//갑오
-		priority[10][9] = priority[10][9]+500;
+		priority[9][10] = priority[9][10]+500;
+		priority[9][20] = priority[9][20]+500;
 		priority[10][19] = priority[10][19]+500;
+		priority[19][20] = priority[19][20]+500;
+		
+		priority[1][8] = priority[1][8]+500;
+		priority[8][11] = priority[8][11]+500;
+		priority[1][18] = priority[1][18]+500;
+		priority[11][18] = priority[11][18]+500;
+	
 		priority[2][7] = priority[2][7]+500;
 		priority[2][17] = priority[2][17]+500;
-		priority[12][7] = priority[12][7]+500;
+		priority[7][12] = priority[7][12]+500;
 		priority[12][17] = priority[12][17]+500;
+		
 		priority[3][6] = priority[3][6]+500;
 		priority[3][16] = priority[3][16]+500;
-		priority[13][6] = priority[13][6]+500;
+		priority[6][13] = priority[6][13]+500;
 		priority[13][16] = priority[13][16]+500;
-		priority[3][6] = priority[3][6]+500;
+		
+		priority[4][5] = priority[4][5]+500;
 		priority[4][15] = priority[4][15]+500;
-		priority[13][6] = priority[13][6]+500;
-		priority[13][16] = priority[13][16]+500;
+		priority[5][14] = priority[5][14]+500;
+		priority[14][15] = priority[14][15]+500;
+		
 		//3,7땡잡이
 		priority[3][17] = priority[3][17] + 400;
 		priority[3][7] = priority[3][7] + 400;
@@ -294,14 +310,17 @@ public class Room {
 		
 	}
 	public int judge() {
+		setPriority();
+		
 		int winner=0;
+		//현재 카드계산을 하는중인 플레이어들을 고른다.
 		ArrayList<User> players=new ArrayList<User>();
 		for(int i=0;i<userArray.size();i++){
 			if(userArray.get(i).state!="die"){
 				players.add(userArray.get(i));
 			}
 		}
-		
+		//카드값을 계산한다.
 		for(int i=0;i<players.size();i++){
 			if(players.get(i).selectedCard1<players.get(i).selectedCard2){
 			players.get(i).cardValue=

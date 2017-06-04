@@ -54,6 +54,8 @@ public class GameRoomUI extends JFrame{
 	//player3
 	JLabel p3Nick,p3Money,p3Card1,p3Card3,p3Card2;
 	
+	//플레이어들의 카드 결과 보여줌.
+	JLabel p1Cardset, p0Cardset, p3Cardset, p2Cardset;
 	JLabel label_3;
 	private JLabel lblBetting;
 	private JButton btnGameStart;
@@ -158,19 +160,19 @@ public class GameRoomUI extends JFrame{
 		getContentPane().setLayout(null);
 		
 		p3State = new JLabel("");
-		p3State.setBounds(528, 203, 160, 160);
+		p3State.setBounds(633, 161, 160, 160);
 		getContentPane().add(p3State);
 		
 		p0State = new JLabel("");
-		p0State.setBounds(501, 493, 160, 160);
+		p0State.setBounds(284, 510, 160, 160);
 		getContentPane().add(p0State);
 		
 		p1State = new JLabel("");
-		p1State.setBounds(12, 155, 160, 160);
+		p1State.setBounds(5, 203, 160, 160);
 		getContentPane().add(p1State);
 		
 		p2State = new JLabel("");
-		p2State.setBounds(172, 45, 160, 160);
+		p2State.setBounds(184, 34, 160, 160);
 		getContentPane().add(p2State);
 		
 		JButton goWaitRoomBTN = new JButton("대기실로 나가기");
@@ -544,6 +546,22 @@ public class GameRoomUI extends JFrame{
 		winLoseLB.setBounds(326, 245, 230, 177);
 		getContentPane().add(winLoseLB);
 		
+		p1Cardset = new JLabel("");
+		p1Cardset.setBounds(284, 385, 80, 72);
+		getContentPane().add(p1Cardset);
+		
+		p0Cardset = new JLabel("");
+		p0Cardset.setBounds(400, 513, 80, 72);
+		getContentPane().add(p0Cardset);
+		
+		p3Cardset = new JLabel("");
+		p3Cardset.setBounds(519, 385, 80, 72);
+		getContentPane().add(p3Cardset);
+		
+		p2Cardset = new JLabel("");
+		p2Cardset.setBounds(400, 220, 80, 72);
+		getContentPane().add(p2Cardset);
+		
 		winLoseLB.setVisible(false);
 		cardSelectLB.setVisible(false);
 		
@@ -557,6 +575,7 @@ public class GameRoomUI extends JFrame{
 		super.paint(g);
 	}
 	public void roomUpdate(){
+		setWaitLabel(false);
 		RoomNAME.setText(client.user.room.roomName);
 		ROOMnumber.setText(Integer.toString(client.user.room.roomNumber));
 		bet.setText(Integer.toString(client.user.room.bet));
@@ -601,6 +620,11 @@ public class GameRoomUI extends JFrame{
 		p1State.setVisible(true);
 		p2State.setVisible(true);
 		p3State.setVisible(true);
+		
+		p0Cardset.setText("");
+		p1Cardset.setText("");
+		p2Cardset.setText("");
+		p3Cardset.setText("");
 		//유저가 n번째일때 오른쪽에는 n+3 %4 번이 위치 왼쪽에는 n+1 %4번이 위치
 		
 		
@@ -707,8 +731,11 @@ public class GameRoomUI extends JFrame{
 			}else if(client.user.room.gameState.equals("cardset")){
 				if(!client.user.state.equals("die")){
 				//최종패를 선택하세요
-				cardSelectLB.setVisible(true);
+				
+				if(!client.user.isReady){
 				cardSelectLB.setText("최종 패 두 장을 선택하세요!");
+				cardSelectLB.setVisible(true);
+				}
 				bettingButtonPN.setVisible(false);
 				player3PN.setBorder(null);
 				player1PN.setBorder(null);
@@ -755,8 +782,8 @@ public class GameRoomUI extends JFrame{
 		if(client.user.state.equals("die")){
 			bettingButtonPN.setVisible(false);
 		}
-		
-		//수정 요함. 룸정보를 계속 업데이트한다.
+		int cardsetValue=0;
+		// 룸정보를 계속 업데이트한다.
 		for(int i=0; i< client.user.room.userArray.size();i++){
 			
 			if(client.user.room.userArray.get(i).playerNumber == n){
@@ -781,6 +808,43 @@ public class GameRoomUI extends JFrame{
 				if(client.user.room.userArray.get(i).state.equals("die")){
 					p0Die.setVisible(true);
 				}
+				if(client.user.selectedCard1 != 99999 && client.user.selectedCard2 != 99999 ){
+					if(client.user.selectedCard1 < client.user.selectedCard2){
+					cardsetValue=client.user.room.priority[client.user.selectedCard1][client.user.selectedCard2];
+					}else{
+						cardsetValue=client.user.room.priority[client.user.selectedCard2][client.user.selectedCard1];
+					}
+					if(cardsetValue==Integer.MAX_VALUE){
+						p0Cardset.setText("삼 팔 광 땡!");
+					}else if(cardsetValue==10000){
+						if(client.user.selectedCard2==18 || client.user.selectedCard1==18){
+							p0Cardset.setText("일 팔 광 땡!");
+						}else{
+							p0Cardset.setText("일 삼 광 땡!");
+						}
+					}else if(cardsetValue>=1000 && cardsetValue<10000){
+						p0Cardset.setText((client.user.selectedCard1%10)+"땡 ");
+					}else if(cardsetValue>=900 && cardsetValue<1000){
+						p0Cardset.setText("알리");
+					}else if(cardsetValue>=800 && cardsetValue<900){
+						p0Cardset.setText("구삥");
+					}else if(cardsetValue>=700 && cardsetValue<800){
+						p0Cardset.setText("장삥");
+					}else if(cardsetValue>=600 && cardsetValue<700){
+						p0Cardset.setText("세륙");
+					}else if(cardsetValue>=500 && cardsetValue<600){
+						p0Cardset.setText("갑오");
+					}else if(cardsetValue>=400 && cardsetValue<500){
+						p0Cardset.setText("땡 잡이");
+					}else if(cardsetValue>=300 && cardsetValue<400){
+						p0Cardset.setText("암행어사");
+					}else if(cardsetValue>=200 && cardsetValue<300){
+						p0Cardset.setText("구사");
+					}else{
+						p0Cardset.setText(cardsetValue+"끗");
+					}
+					
+				}
 			}else if(client.user.room.userArray.get(i).playerNumber == ((n+1)%4)){
 			
 				p1Nick.setText(client.user.room.userArray.get(i).nickName);
@@ -802,6 +866,44 @@ public class GameRoomUI extends JFrame{
 				}
 				if(client.user.room.userArray.get(i).state.equals("die")){
 					p1Die.setVisible(true);
+				}
+				if(client.user.room.userArray.get(i).card2 != 99999 && client.user.room.userArray.get(i).card3 != 99999 
+						&& client.user.room.userArray.get(i).card2 != 0 && client.user.room.userArray.get(i).card3 != 0){
+					if(client.user.room.userArray.get(i).card2 < client.user.room.userArray.get(i).card3){
+					cardsetValue=client.user.room.priority[client.user.room.userArray.get(i).card2][client.user.room.userArray.get(i).card3];
+					}else{
+						cardsetValue=client.user.room.priority[client.user.room.userArray.get(i).card3][client.user.room.userArray.get(i).card2];
+					}
+					if(cardsetValue==Integer.MAX_VALUE){
+						p1Cardset.setText("삼 팔 광 땡!");
+					}else if(cardsetValue==10000){
+						if(client.user.selectedCard2==18 || client.user.selectedCard1==18){
+							p1Cardset.setText("일 팔 광 땡!");
+						}else{
+							p1Cardset.setText("일 삼 광 땡!");
+						}
+					}else if(cardsetValue>=1000 && cardsetValue<10000){
+						p1Cardset.setText((client.user.selectedCard1%10)+"땡 ");
+					}else if(cardsetValue>=900 && cardsetValue<1000){
+						p1Cardset.setText("알리");
+					}else if(cardsetValue>=800 && cardsetValue<900){
+						p1Cardset.setText("구삥");
+					}else if(cardsetValue>=700 && cardsetValue<800){
+						p1Cardset.setText("장삥");
+					}else if(cardsetValue>=600 && cardsetValue<700){
+						p1Cardset.setText("세륙");
+					}else if(cardsetValue>=500 && cardsetValue<600){
+						p1Cardset.setText("갑오");
+					}else if(cardsetValue>=400 && cardsetValue<500){
+						p1Cardset.setText("땡 잡이");
+					}else if(cardsetValue>=300 && cardsetValue<400){
+						p1Cardset.setText("암행어사");
+					}else if(cardsetValue>=200 && cardsetValue<300){
+						p1Cardset.setText("구사");
+					}else{
+						p1Cardset.setText(cardsetValue+"끗");
+					}
+					
 				}
 			}else if(client.user.room.userArray.get(i).playerNumber == ((n+2)%4)){
 				
@@ -826,6 +928,44 @@ public class GameRoomUI extends JFrame{
 				if(client.user.room.userArray.get(i).state.equals("die")){
 					p2Die.setVisible(true);
 				}
+				if(client.user.room.userArray.get(i).card2 != 99999 && client.user.room.userArray.get(i).card3 != 99999 
+						&& client.user.room.userArray.get(i).card2 != 0 && client.user.room.userArray.get(i).card3 != 0){
+					if(client.user.room.userArray.get(i).card2 < client.user.room.userArray.get(i).card3){
+					cardsetValue=client.user.room.priority[client.user.room.userArray.get(i).card2][client.user.room.userArray.get(i).card3];
+					}else{
+						cardsetValue=client.user.room.priority[client.user.room.userArray.get(i).card3][client.user.room.userArray.get(i).card2];
+					}
+					if(cardsetValue==Integer.MAX_VALUE){
+						p2Cardset.setText("삼 팔 광 땡!");
+					}else if(cardsetValue==10000){
+						if(client.user.selectedCard2==18 || client.user.selectedCard1==18){
+							p2Cardset.setText("일 팔 광 땡!");
+						}else{
+							p2Cardset.setText("일 삼 광 땡!");
+						}
+					}else if(cardsetValue>=1000 && cardsetValue<10000){
+						p2Cardset.setText((client.user.selectedCard1%10)+"땡 ");
+					}else if(cardsetValue>=900 && cardsetValue<1000){
+						p2Cardset.setText("알리");
+					}else if(cardsetValue>=800 && cardsetValue<900){
+						p2Cardset.setText("구삥");
+					}else if(cardsetValue>=700 && cardsetValue<800){
+						p2Cardset.setText("장삥");
+					}else if(cardsetValue>=600 && cardsetValue<700){
+						p2Cardset.setText("세륙");
+					}else if(cardsetValue>=500 && cardsetValue<600){
+						p2Cardset.setText("갑오");
+					}else if(cardsetValue>=400 && cardsetValue<500){
+						p2Cardset.setText("땡 잡이");
+					}else if(cardsetValue>=300 && cardsetValue<400){
+						p2Cardset.setText("암행어사");
+					}else if(cardsetValue>=200 && cardsetValue<300){
+						p2Cardset.setText("구사");
+					}else{
+						p2Cardset.setText(cardsetValue+"끗");
+					}
+					
+				}
 			}else if(client.user.room.userArray.get(i).playerNumber == ((n+3)%4)){
 				
 			
@@ -848,6 +988,44 @@ public class GameRoomUI extends JFrame{
 				}
 				if(client.user.room.userArray.get(i).state.equals("die")){
 					p3Die.setVisible(true);
+				}
+				if(client.user.room.userArray.get(i).card2 != 99999 && client.user.room.userArray.get(i).card3 != 99999 
+						&& client.user.room.userArray.get(i).card2 != 0 && client.user.room.userArray.get(i).card3 != 0){
+					if(client.user.room.userArray.get(i).card2 < client.user.room.userArray.get(i).card3){
+					cardsetValue=client.user.room.priority[client.user.room.userArray.get(i).card2][client.user.room.userArray.get(i).card3];
+					}else{
+						cardsetValue=client.user.room.priority[client.user.room.userArray.get(i).card3][client.user.room.userArray.get(i).card2];
+					}
+					if(cardsetValue==Integer.MAX_VALUE){
+						p3Cardset.setText("삼 팔 광 땡!");
+					}else if(cardsetValue==10000){
+						if(client.user.selectedCard2==18 || client.user.selectedCard1==18){
+							p3Cardset.setText("일 팔 광 땡!");
+						}else{
+							p3Cardset.setText("일 삼 광 땡!");
+						}
+					}else if(cardsetValue>=1000 && cardsetValue<10000){
+						p3Cardset.setText((client.user.selectedCard1%10)+"땡 ");
+					}else if(cardsetValue>=900 && cardsetValue<1000){
+						p3Cardset.setText("알리");
+					}else if(cardsetValue>=800 && cardsetValue<900){
+						p3Cardset.setText("구삥");
+					}else if(cardsetValue>=700 && cardsetValue<800){
+						p3Cardset.setText("장삥");
+					}else if(cardsetValue>=600 && cardsetValue<700){
+						p3Cardset.setText("세륙");
+					}else if(cardsetValue>=500 && cardsetValue<600){
+						p3Cardset.setText("갑오");
+					}else if(cardsetValue>=400 && cardsetValue<500){
+						p3Cardset.setText("땡 잡이");
+					}else if(cardsetValue>=300 && cardsetValue<400){
+						p3Cardset.setText("암행어사");
+					}else if(cardsetValue>=200 && cardsetValue<300){
+						p3Cardset.setText("구사");
+					}else{
+						p3Cardset.setText(cardsetValue+"끗");
+					}
+					
 				}
 			}
 					
@@ -930,8 +1108,9 @@ public class GameRoomUI extends JFrame{
 		int n = client.user.playerNumber;
 		try{
 		for(int i=0; i< client.user.room.userArray.size();i++){
+			if(!client.user.room.userArray.get(i).state.equals("die")){
 			if(client.user.room.userArray.get(i).playerNumber == ((n)%4)){
-				HandOutCard(n, card);
+				HandOutCard(0, card);
 				Thread.sleep(100);
 			}else if(client.user.room.userArray.get(i).playerNumber == ((n+1)%4)){
 				HandOutCard(1, card);
@@ -943,7 +1122,7 @@ public class GameRoomUI extends JFrame{
 				HandOutCard(3, card);
 				Thread.sleep(100);
 			}
-
+			}
 		}
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -1039,5 +1218,12 @@ public class GameRoomUI extends JFrame{
 			}
 		}.start();
 	
+	}
+	void setWaitLabel(boolean t){
+		if(true){
+		cardSelectLB.setText("다른 사람의 선택을 기다리는 중입니다.");
+		}else{
+			cardSelectLB.setText("공개할 카드를 선택하세요!");
+		}
 	}
 }
