@@ -219,7 +219,8 @@ public class Client implements Runnable {
 		case MsgProtocol.CODE_GAMESTART:
 			result=token.nextToken();
 			if(result.equals("OK")){
-			//게임이 시작되었다. 카드 배부 애니메이션을 실행한다. 요건 나중에 수정예정
+			user.userRestart();
+			//게임이 시작되었다. 카드 배부 애니메이션을 실행한다. 
 			gameroom.hand(2);
 			user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
 			}else{

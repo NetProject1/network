@@ -522,6 +522,7 @@ public class ServerReceiver extends Thread {
 			//최종카드 선택 
 			String msg=MsgProtocol.CODE_CARDSET;
 			GameRoomEcho(msg);
+			user.room.setNextPlayerTurn();
 		}else if(user.room.isEndBetState()==1){
 			user.room.gameState="end";
 			user.room.isGameStart=false;
@@ -713,6 +714,7 @@ public class ServerReceiver extends Thread {
 			  user.room.userArray.get(i).userRestart();
 			}
 		}
+		
 		user.room.cardPoint=0;
 		user.room.setPlayersCardBack1();
 		user.room.dealCard();

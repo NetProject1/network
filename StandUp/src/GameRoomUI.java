@@ -891,13 +891,14 @@ public class GameRoomUI extends JFrame{
 					if(cardsetValue==Integer.MAX_VALUE){
 						p1Cardset.setText("삼 팔 광 땡!");
 					}else if(cardsetValue==10000){
-						if(client.user.selectedCard2==18 || client.user.selectedCard1==18){
+						if(client.user.room.userArray.get(i).card2==18 || client.user.room.userArray.get(i).card1==18){
 							p1Cardset.setText("일 팔 광 땡!");
 						}else{
 							p1Cardset.setText("일 삼 광 땡!");
 						}
 					}else if(cardsetValue>=1000 && cardsetValue<10000){
-						p1Cardset.setText((client.user.selectedCard1%10)+"땡 ");
+						int tang=client.user.room.userArray.get(i).card2%10;
+						p1Cardset.setText((tang)+"땡 ");
 					}else if(cardsetValue>=900 && cardsetValue<1000){
 						p1Cardset.setText("알리");
 					}else if(cardsetValue>=800 && cardsetValue<900){
@@ -952,13 +953,14 @@ public class GameRoomUI extends JFrame{
 					if(cardsetValue==Integer.MAX_VALUE){
 						p2Cardset.setText("삼 팔 광 땡!");
 					}else if(cardsetValue==10000){
-						if(client.user.selectedCard2==18 || client.user.selectedCard1==18){
+						if(client.user.room.userArray.get(i).card2==18 || client.user.room.userArray.get(i).card1==18){
 							p2Cardset.setText("일 팔 광 땡!");
 						}else{
 							p2Cardset.setText("일 삼 광 땡!");
 						}
 					}else if(cardsetValue>=1000 && cardsetValue<10000){
-						p2Cardset.setText((client.user.selectedCard1%10)+"땡 ");
+						int tang=client.user.room.userArray.get(i).card2%10;
+						p2Cardset.setText((tang)+"땡 ");
 					}else if(cardsetValue>=900 && cardsetValue<1000){
 						p2Cardset.setText("알리");
 					}else if(cardsetValue>=800 && cardsetValue<900){
@@ -1013,13 +1015,14 @@ public class GameRoomUI extends JFrame{
 					if(cardsetValue==Integer.MAX_VALUE){
 						p3Cardset.setText("삼 팔 광 땡!");
 					}else if(cardsetValue==10000){
-						if(client.user.selectedCard2==18 || client.user.selectedCard1==18){
+						if(client.user.room.userArray.get(i).card2==18 || client.user.room.userArray.get(i).card1==18){
 							p3Cardset.setText("일 팔 광 땡!");
 						}else{
 							p3Cardset.setText("일 삼 광 땡!");
 						}
 					}else if(cardsetValue>=1000 && cardsetValue<10000){
-						p3Cardset.setText((client.user.selectedCard1%10)+"땡 ");
+						int tang=client.user.room.userArray.get(i).card2%10;
+						p3Cardset.setText((tang)+"땡 ");
 					}else if(cardsetValue>=900 && cardsetValue<1000){
 						p3Cardset.setText("알리");
 					}else if(cardsetValue>=800 && cardsetValue<900){
