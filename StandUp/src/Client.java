@@ -414,7 +414,7 @@ public class Client implements Runnable {
 	
 	void gameRoomChatRecieve(String str){
 		gameroom.textArea.append(str);
-		gameroom.textArea.setCaretPosition(waitRoom.chatArea.getDocument().getLength());
+		gameroom.textArea.setCaretPosition(gameroom.textArea.getDocument().getLength());
 	}
 	//게임 방정보 룸마스터정보 유저정보순으로 받아온다
 	//수정요함
