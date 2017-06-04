@@ -155,17 +155,13 @@ public class GameRoomUI extends JFrame{
 		getContentPane().add(cardBackLB2);
 		getContentPane().add(cardBackLB3);
 		getContentPane().add(cardBackLB4);
-		setBounds(100, 100, 900, 850);
+		setBounds(100, 100, 900, 800);
 		
 		getContentPane().setLayout(null);
 		
 		p3State = new JLabel("");
 		p3State.setBounds(633, 161, 160, 160);
 		getContentPane().add(p3State);
-		
-		p0State = new JLabel("");
-		p0State.setBounds(284, 510, 160, 160);
-		getContentPane().add(p0State);
 		
 		p1State = new JLabel("");
 		p1State.setBounds(5, 203, 160, 160);
@@ -175,8 +171,12 @@ public class GameRoomUI extends JFrame{
 		p2State.setBounds(184, 34, 160, 160);
 		getContentPane().add(p2State);
 		
+		p0State = new JLabel("");
+		p0State.setBounds(263, 434, 160, 160);
+		getContentPane().add(p0State);
+		
 		JButton goWaitRoomBTN = new JButton("대기실로 나가기");
-		goWaitRoomBTN.setBounds(759, 647, 97, 23);
+		goWaitRoomBTN.setBounds(760, 583, 97, 23);
 		getContentPane().add(goWaitRoomBTN);
 		goWaitRoomBTN.addMouseListener(new MouseAdapter() {
 			@Override
@@ -186,7 +186,7 @@ public class GameRoomUI extends JFrame{
 		});
 		
 		player0PN = new JPanel();
-		player0PN.setBounds(300, 595, 280, 210);
+		player0PN.setBounds(300, 550, 280, 210);
 		getContentPane().add(player0PN);
 		player0PN.setLayout(null);
 		
@@ -238,7 +238,7 @@ public class GameRoomUI extends JFrame{
 		
 		player1PN = new JPanel();
 		player1PN.setLayout(null);
-		player1PN.setBounds(5, 300, 280, 210);
+		player1PN.setBounds(5, 280, 280, 210);
 		getContentPane().add(player1PN);
 		
 		p1Die = new JLabel("다이!");
@@ -280,7 +280,7 @@ public class GameRoomUI extends JFrame{
 		
 		player3PN = new JPanel();
 		player3PN.setLayout(null);
-		player3PN.setBounds(600, 300, 280, 210);
+		player3PN.setBounds(600, 280, 280, 210);
 		getContentPane().add(player3PN);
 		 
 		 p3Die = new JLabel("다이!");
@@ -389,7 +389,7 @@ public class GameRoomUI extends JFrame{
 		 p3Info.add(p3Money);
 		 
 		JPanel roomChatPN = new JPanel();
-		roomChatPN.setBounds(0, 600, 241, 210);
+		roomChatPN.setBounds(0, 550, 241, 210);
 		getContentPane().add(roomChatPN);
 		roomChatPN.setLayout(new BorderLayout(0, 0));
 		
@@ -425,7 +425,7 @@ public class GameRoomUI extends JFrame{
 		});
 		
 		bettingButtonPN = new JPanel();
-		bettingButtonPN.setBounds(640, 685, 230, 114);
+		bettingButtonPN.setBounds(642, 616, 230, 114);
 		getContentPane().add(bettingButtonPN);
 		bettingButtonPN.setLayout(null);
 		
@@ -492,7 +492,7 @@ public class GameRoomUI extends JFrame{
 				}
 			}
 		});
-		btnGameStart.setBounds(650, 647, 97, 23);
+		btnGameStart.setBounds(651, 583, 97, 23);
 		btnGameStart.setVisible(false);
 		getContentPane().add(btnGameStart);
 		
@@ -513,7 +513,8 @@ public class GameRoomUI extends JFrame{
 		getContentPane().add(amoutMoney);
 		
 		cardSelectLB = new JLabel("공개할 카드를 선택하세요!");
-		cardSelectLB.setBounds(300, 541, 280, 47);
+		cardSelectLB.setHorizontalAlignment(SwingConstants.CENTER);
+		cardSelectLB.setBounds(284, 500, 311, 47);
 		getContentPane().add(cardSelectLB);
 		cardSelectLB.setFont(new Font("Gulim", Font.BOLD, 14));
 		cardSelectLB.setForeground(Color.RED);
@@ -550,14 +551,14 @@ public class GameRoomUI extends JFrame{
 		p1Cardset.setHorizontalAlignment(SwingConstants.CENTER);
 		p1Cardset.setForeground(new Color(255, 20, 147));
 		p1Cardset.setFont(new Font("Gulim", Font.BOLD, 20));
-		p1Cardset.setBounds(284, 385, 160, 72);
+		p1Cardset.setBounds(284, 350, 160, 72);
 		getContentPane().add(p1Cardset);
 		
 		p0Cardset = new JLabel("");
 		p0Cardset.setHorizontalAlignment(SwingConstants.CENTER);
 		p0Cardset.setForeground(new Color(255, 20, 147));
 		p0Cardset.setFont(new Font("Gulim", Font.BOLD, 20));
-		p0Cardset.setBounds(326, 500, 209, 72);
+		p0Cardset.setBounds(326, 450, 209, 72);
 		getContentPane().add(p0Cardset);
 		
 		
@@ -565,7 +566,7 @@ public class GameRoomUI extends JFrame{
 		p3Cardset.setHorizontalAlignment(SwingConstants.CENTER);
 		p3Cardset.setForeground(new Color(255, 20, 147));
 		p3Cardset.setFont(new Font("Gulim", Font.BOLD, 20));
-		p3Cardset.setBounds(435, 385, 160, 72);
+		p3Cardset.setBounds(434, 350, 160, 72);
 		getContentPane().add(p3Cardset);
 		
 		p2Cardset = new JLabel("");
