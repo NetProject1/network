@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -204,7 +205,7 @@ public class Room {
 			}
 		}
 	}
-	void setNextPlayerTurn(){
+	synchronized void setNextPlayerTurn(){
 		playerturn++;
 		if(playerturn>=userArray.size()){
 			playerturn=0;

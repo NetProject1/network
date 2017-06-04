@@ -1,3 +1,4 @@
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -618,7 +619,49 @@ public class GameRoomUI extends JFrame{
 			bettingButtonPN.setVisible(false);
 			//배팅시
 		}else if(client.user.room.gameState.equals("bet")){
+			//배팅시만 콜과 다이를 계속 보여준다
+			for(int i=0; i< client.user.room.userArray.size();i++){			
+				if(client.user.room.userArray.get(i).playerNumber == n){
+					if(client.user.room.userArray.get(i).state.equals("call")){
+						p0State.setIcon(callimg);
+					}else if(client.user.room.userArray.get(i).state.equals("double")){
+						p0State.setIcon(doubleimg);
+					}else if(client.user.room.userArray.get(i).state.equals("half")){
+						p0State.setIcon(halfimg);
+					}
 			
+				}else if(client.user.room.userArray.get(i).playerNumber == ((n+1)%4)){
+					
+					if(client.user.room.userArray.get(i).state.equals("call")){
+						p1State.setIcon(callimg);
+					}else if(client.user.room.userArray.get(i).state.equals("double")){
+						p1State.setIcon(doubleimg);
+					}else if(client.user.room.userArray.get(i).state.equals("half")){
+						p1State.setIcon(halfimg);
+					}
+			
+				}else if(client.user.room.userArray.get(i).playerNumber == ((n+2)%4)){
+					
+					if(client.user.room.userArray.get(i).state.equals("call")){
+						p2State.setIcon(callimg);
+					}else if(client.user.room.userArray.get(i).state.equals("double")){
+						p2State.setIcon(doubleimg);
+					}else if(client.user.room.userArray.get(i).state.equals("half")){
+						p2State.setIcon(halfimg);
+					}
+				
+				}else if(client.user.room.userArray.get(i).playerNumber == ((n+3)%4)){
+					
+					if(client.user.room.userArray.get(i).state.equals("call")){
+						p3State.setIcon(callimg);
+					}else if(client.user.room.userArray.get(i).state.equals("double")){
+						p3State.setIcon(doubleimg);
+					}else if(client.user.room.userArray.get(i).state.equals("half")){
+						p3State.setIcon(halfimg);
+				
+				}
+				}		
+			}
 			
 			cardSelectLB.setVisible(false);
 			doubleBTN.setVisible(true);
@@ -709,19 +752,15 @@ public class GameRoomUI extends JFrame{
 				p3Card2.setBorder(null);
 				p3Card3.setBorder(null);
 			}
+		if(client.user.state.equals("die")){
+			bettingButtonPN.setVisible(false);
+		}
 		
 		//수정 요함. 룸정보를 계속 업데이트한다.
 		for(int i=0; i< client.user.room.userArray.size();i++){
 			
 			if(client.user.room.userArray.get(i).playerNumber == n){
-				
-				if(client.user.room.userArray.get(i).state.equals("call")){
-					p0State.setIcon(callimg);
-				}else if(client.user.room.userArray.get(i).state.equals("double")){
-					p0State.setIcon(doubleimg);
-				}else if(client.user.room.userArray.get(i).state.equals("half")){
-					p0State.setIcon(halfimg);
-				}
+
 				p0Nick.setText(client.user.room.userArray.get(i).nickName);		
 				p0Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
 				if(client.user.room.userArray.get(i).card1 != 99999){
@@ -743,14 +782,7 @@ public class GameRoomUI extends JFrame{
 					p0Die.setVisible(true);
 				}
 			}else if(client.user.room.userArray.get(i).playerNumber == ((n+1)%4)){
-				
-				if(client.user.room.userArray.get(i).state.equals("call")){
-					p1State.setIcon(callimg);
-				}else if(client.user.room.userArray.get(i).state.equals("double")){
-					p1State.setIcon(doubleimg);
-				}else if(client.user.room.userArray.get(i).state.equals("half")){
-					p1State.setIcon(halfimg);
-				}
+			
 				p1Nick.setText(client.user.room.userArray.get(i).nickName);
 				p1Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
 				if(client.user.room.userArray.get(i).card1 != 99999){
@@ -773,13 +805,7 @@ public class GameRoomUI extends JFrame{
 				}
 			}else if(client.user.room.userArray.get(i).playerNumber == ((n+2)%4)){
 				
-				if(client.user.room.userArray.get(i).state.equals("call")){
-					p2State.setIcon(callimg);
-				}else if(client.user.room.userArray.get(i).state.equals("double")){
-					p2State.setIcon(doubleimg);
-				}else if(client.user.room.userArray.get(i).state.equals("half")){
-					p2State.setIcon(halfimg);
-				}
+			
 				p2Nick.setText(client.user.room.userArray.get(i).nickName);
 				p2Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
 				if(client.user.room.userArray.get(i).card1 != 99999){
@@ -802,13 +828,7 @@ public class GameRoomUI extends JFrame{
 				}
 			}else if(client.user.room.userArray.get(i).playerNumber == ((n+3)%4)){
 				
-				if(client.user.room.userArray.get(i).state.equals("call")){
-					p3State.setIcon(callimg);
-				}else if(client.user.room.userArray.get(i).state.equals("double")){
-					p3State.setIcon(doubleimg);
-				}else if(client.user.room.userArray.get(i).state.equals("half")){
-					p3State.setIcon(halfimg);
-				}
+			
 				p3Nick.setText(client.user.room.userArray.get(i).nickName);
 				p3Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
 				if(client.user.room.userArray.get(i).card1 != 99999){

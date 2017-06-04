@@ -1,3 +1,4 @@
+
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -7,6 +8,7 @@ import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+
 import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.JLabel;

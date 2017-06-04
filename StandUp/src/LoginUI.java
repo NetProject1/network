@@ -1,3 +1,4 @@
+
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -8,6 +9,7 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
@@ -135,11 +137,15 @@ public class LoginUI extends JFrame{
 	
 	void LoginSubmit(){
 		System.out.println(idFD.getText()+":아이디 "+pwFD.getText()+":비밀번호 로그인");
+		if(!idFD.getText().equals("") && !pwFD.getText().equals("") ){
 		try {
 			client.dos.writeUTF(MsgProtocol.LOGIN+"/"+idFD.getText()+"/"+pwFD.getText());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		}else{
+			JOptionPane.showMessageDialog(null, "아이디와 비밀번호를 모두 입력하세요");
 		}
 	}
 	

@@ -1,6 +1,9 @@
+
 import java.net.*;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+
 
 //어떠한 클래스에서도 접근가능한 클래스.
 public class SServer {

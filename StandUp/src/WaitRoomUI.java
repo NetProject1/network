@@ -1,3 +1,4 @@
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Color;
@@ -7,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JTextField;
@@ -17,9 +19,13 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
 import javax.swing.ListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.BoxLayout;
 import java.awt.CardLayout;
 import javax.swing.SpringLayout;
@@ -298,4 +304,5 @@ public class WaitRoomUI extends JFrame{
 		userWin.setText(Integer.toString(client.user.win));
 		userLose.setText(Integer.toString(client.user.lose));
 	}
+
 }
