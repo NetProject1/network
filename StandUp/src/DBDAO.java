@@ -166,7 +166,7 @@ public class DBDAO {
 				pstmt.setString(1, uid);
 				pstmt.setString(2, upw);
 				pstmt.setString(3, unickname);
-				pstmt.setInt(4, 1000);
+				pstmt.setInt(4, 5000);
 				pstmt.setInt(5, 0);
 				pstmt.setInt(6, 0);
 

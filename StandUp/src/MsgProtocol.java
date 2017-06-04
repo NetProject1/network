@@ -16,7 +16,7 @@ public class MsgProtocol {
 	public static final String ROOM_UPDATE="RUP";
 	public static final String WAITROOM_UPDATE="WRUP";
 	public static final String USERUPDATE="USERUPDATEINFO";
-	
+	public static final String GETOUTFOOR="GETOUTFOOOR";
 	public static final String CODE_GAMESTART = "GAMESTART";
 	public static final String CODE_CARDOPEN="GAMECARDOPEN";
 	public static final String CODE_CARDSET="GAMECARDSET";

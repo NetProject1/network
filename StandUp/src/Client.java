@@ -175,6 +175,9 @@ public class Client implements Runnable {
 				waitRoom.dispose();
 				//수정
 				user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
+			}else{
+				result=token.nextToken();
+				JOptionPane.showMessageDialog(null, result);
 			}
 
 			break;
@@ -277,6 +280,11 @@ public class Client implements Runnable {
 				result=token.nextToken();
 				JOptionPane.showMessageDialog(null, result);
 			}
+			break;
+		case MsgProtocol.GETOUTFOOR:
+	
+			ExitRoom();
+			JOptionPane.showMessageDialog(null, "돈이 부족하여 게임에 참가 할 수 없습니다.");
 			break;
 		}
 		 

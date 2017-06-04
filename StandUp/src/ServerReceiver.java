@@ -265,6 +265,7 @@ public class ServerReceiver extends Thread {
 		}
 	}
 	synchronized void makeRoom(String rName){
+		if(user.money>=200){
 		int rnum=0;
 		if(roomArray.size()!=0){
 			for(int i=0; i <roomArray.size() ;i++){
@@ -285,6 +286,14 @@ public class ServerReceiver extends Thread {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		}else{
+			try {
+				user.dos.writeUTF(MsgProtocol.MAKEROOM+"/FAIL/돈이 없어서 게임을 할 수 없습니다.");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
@@ -334,8 +343,12 @@ public class ServerReceiver extends Thread {
 						//방에 입장 성공적.
 						//방 정보를 전달
 						//같은 방인 놈들 전원 방정보 갱신해야함.
+						if(user.money>=200){
 						user.dos.writeUTF(MsgProtocol.ENTERROOM+"/OK/"+user.room.roomNumber
 								+"/"+user.room.roomName);
+						}else{
+							user.dos.writeUTF(MsgProtocol.ENTERROOM+"/FAIL/돈이 부족해서 게임에 참가 할 수 없습니다.");
+						}
 						
 					}else{
 						user.dos.writeUTF(MsgProtocol.ENTERROOM+"/FAIL/방이 꽉 찼습니다.");
@@ -416,7 +429,35 @@ public class ServerReceiver extends Thread {
 			msg=MsgProtocol.ROOM_UPDATE+selectedRoom.GetRoomINFO();
 		}
 		
+		if(selectedRoom.isGameStart!=true){
+			//거지를 강퇴시킨다
+			GetOutFoor(rNum);
+			
+		}
+		
 	}
+	void GetOutFoor(int num){
+		Room selectedRoom=null;
+		for(int i=0;i< roomArray.size(); i++){
+			if(roomArray.get(i).roomNumber==num){
+				selectedRoom=roomArray.get(i);
+				selectedRoom.setPlayerOrder();
+			}
+		}
+		for(int i=0;i< selectedRoom.userArray.size(); i++){
+			if(selectedRoom.userArray.get(i).money<200){
+				try {
+					String msg=MsgProtocol.GETOUTFOOR;
+					selectedRoom.userArray.get(i).dos.writeUTF(msg);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
+	
 	void GameRoomEcho(String msg){
 		for(int i=0; i <user.room.userArray.size() ;i++){
 			try {
