@@ -196,6 +196,14 @@ public class Room {
 		
 		return 0;
 	}
+	//판돈을 올렸을때 콜을 리셋한다.
+	void callReset(){
+		for(int i=0;i< userArray.size();i++){
+			if(userArray.get(i).state.equals("call")){
+				userArray.get(i).state="idle";
+			}
+		}
+	}
 	void setNextPlayerTurn(){
 		playerturn++;
 		if(playerturn>=userArray.size()){

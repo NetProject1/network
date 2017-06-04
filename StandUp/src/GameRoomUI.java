@@ -68,6 +68,14 @@ public class GameRoomUI extends JFrame{
 	private JLabel lblNewLabel_4;
 	private JLabel RoomNAME;
 	
+	//말풍선
+	JLabel p0State, p2State,p1State, p3State;
+	ImageIcon doubleimg;
+	ImageIcon halfimg;
+	ImageIcon callimg;
+	
+	JButton callBTN,doubleBTN, halfBTN, dieBTN;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -92,7 +100,10 @@ public class GameRoomUI extends JFrame{
 	 */
 	private void initialize() {
 		//이미지 삽입
-		
+		doubleimg=new ImageIcon("img/double.png");
+		callimg=new ImageIcon("img/call.png");
+		halfimg=new ImageIcon("img/half.png");
+
 		images[0]=new ImageIcon("img/CardBack.png");
 		images[1]=new ImageIcon("img/01.jpg");
 		images[2]=new ImageIcon("img/02.jpg");
@@ -145,6 +156,22 @@ public class GameRoomUI extends JFrame{
 		
 		getContentPane().setLayout(null);
 		
+		p3State = new JLabel("");
+		p3State.setBounds(528, 203, 160, 160);
+		getContentPane().add(p3State);
+		
+		p0State = new JLabel("");
+		p0State.setBounds(501, 493, 160, 160);
+		getContentPane().add(p0State);
+		
+		p1State = new JLabel("");
+		p1State.setBounds(12, 155, 160, 160);
+		getContentPane().add(p1State);
+		
+		p2State = new JLabel("");
+		p2State.setBounds(172, 45, 160, 160);
+		getContentPane().add(p2State);
+		
 		JButton goWaitRoomBTN = new JButton("대기실로 나가기");
 		goWaitRoomBTN.setBounds(759, 647, 97, 23);
 		getContentPane().add(goWaitRoomBTN);
@@ -159,6 +186,15 @@ public class GameRoomUI extends JFrame{
 		player0PN.setBounds(300, 595, 280, 210);
 		getContentPane().add(player0PN);
 		player0PN.setLayout(null);
+		
+		p0Die = new JLabel("다이!");
+		p0Die.setHorizontalAlignment(SwingConstants.CENTER);
+		p0Die.setForeground(new Color(204, 0, 0));
+		p0Die.setFont(new Font("Gulim", Font.PLAIN, 53));
+		p0Die.setBounds(0, 0, 293, 203);
+		player0PN.add(p0Die);
+		
+		 p0Die.setVisible(false);
 		
 		p0Card1 = new JLabel("");
 		p0Card1.setBounds(10, 100, 80, 100);
@@ -202,6 +238,14 @@ public class GameRoomUI extends JFrame{
 		player1PN.setBounds(5, 300, 280, 210);
 		getContentPane().add(player1PN);
 		
+		p1Die = new JLabel("다이!");
+		p1Die.setForeground(new Color(204, 0, 0));
+		p1Die.setHorizontalAlignment(SwingConstants.CENTER);
+		p1Die.setFont(new Font("Gulim", Font.PLAIN, 53));
+		p1Die.setBounds(0, 0, 293, 203);
+		player1PN.add(p1Die);
+		p1Die.setVisible(false);
+		
 		p1Card1 = new JLabel("");
 		p1Card1.setBounds(10, 100, 80, 100);
 		player1PN.add(p1Card1);
@@ -215,6 +259,14 @@ public class GameRoomUI extends JFrame{
 		player2PN.setBounds(300, 10, 280, 210);
 		getContentPane().add(player2PN);
 		
+		p2Die = new JLabel("다이!");
+		p2Die.setHorizontalAlignment(SwingConstants.CENTER);
+		p2Die.setForeground(new Color(204, 0, 0));
+		p2Die.setFont(new Font("Gulim", Font.PLAIN, 53));
+		p2Die.setBounds(0, 0, 293, 203);
+		player2PN.add(p2Die);
+		p2Die.setVisible(false);
+		
 		p2Card1 = new JLabel("");
 		p2Card1.setBounds(10, 100, 80, 100);
 		player2PN.add(p2Card1);
@@ -227,6 +279,14 @@ public class GameRoomUI extends JFrame{
 		player3PN.setLayout(null);
 		player3PN.setBounds(600, 300, 280, 210);
 		getContentPane().add(player3PN);
+		 
+		 p3Die = new JLabel("다이!");
+		 p3Die.setHorizontalAlignment(SwingConstants.CENTER);
+		 p3Die.setForeground(new Color(204, 0, 0));
+		 p3Die.setFont(new Font("Gulim", Font.PLAIN, 53));
+		 p3Die.setBounds(0, 0, 293, 203);
+		 player3PN.add(p3Die);
+		 p3Die.setVisible(false);
 		
 		 p3Card1 = new JLabel("");
 		p3Card1.setBounds(10, 100, 80, 100);
@@ -255,13 +315,6 @@ public class GameRoomUI extends JFrame{
 		p0Money = new JLabel("");
 		p0Money.setBounds(87, 44, 181, 15);
 		p0Info.add(p0Money);
-		
-		p0Die = new JLabel("다이!");
-		p0Die.setHorizontalAlignment(SwingConstants.CENTER);
-		p0Die.setForeground(new Color(204, 0, 0));
-		p0Die.setFont(new Font("Gulim", Font.PLAIN, 53));
-		p0Die.setBounds(0, 0, 293, 203);
-		player0PN.add(p0Die);
 		player1PN.setOpaque(false);
 		
 		p1Card3 = new JLabel("");
@@ -285,13 +338,6 @@ public class GameRoomUI extends JFrame{
 		p1Money = new JLabel("");
 		p1Money.setBounds(87, 44, 181, 15);
 		p1Info.add(p1Money);
-		
-		p1Die = new JLabel("다이!");
-		p1Die.setForeground(new Color(204, 0, 0));
-		p1Die.setHorizontalAlignment(SwingConstants.CENTER);
-		p1Die.setFont(new Font("Gulim", Font.PLAIN, 53));
-		p1Die.setBounds(0, 0, 293, 203);
-		player1PN.add(p1Die);
 		player2PN.setOpaque(false);
 		
 		p2Card3 = new JLabel("");
@@ -315,13 +361,6 @@ public class GameRoomUI extends JFrame{
 		p2Money = new JLabel("");
 		p2Money.setBounds(87, 44, 181, 15);
 		p2Info.add(p2Money);
-		
-		p2Die = new JLabel("다이!");
-		p2Die.setHorizontalAlignment(SwingConstants.CENTER);
-		p2Die.setForeground(new Color(204, 0, 0));
-		p2Die.setFont(new Font("Gulim", Font.PLAIN, 53));
-		p2Die.setBounds(0, 0, 293, 203);
-		player2PN.add(p2Die);
 		player3PN.setOpaque(false);
 		
 		 p3Card3 = new JLabel("");
@@ -345,18 +384,6 @@ public class GameRoomUI extends JFrame{
 		 p3Money = new JLabel("");
 		 p3Money.setBounds(87, 44, 181, 15);
 		 p3Info.add(p3Money);
-		 
-		 p3Die = new JLabel("다이!");
-		 p3Die.setHorizontalAlignment(SwingConstants.CENTER);
-		 p3Die.setForeground(new Color(204, 0, 0));
-		 p3Die.setFont(new Font("Gulim", Font.PLAIN, 53));
-		 p3Die.setBounds(0, 0, 293, 203);
-		 player3PN.add(p3Die);
-		
-		 p0Die.setVisible(false);
-		 p1Die.setVisible(false);
-		 p2Die.setVisible(false);
-		 p3Die.setVisible(false);
 		 
 		JPanel roomChatPN = new JPanel();
 		roomChatPN.setBounds(0, 600, 241, 210);
@@ -399,23 +426,23 @@ public class GameRoomUI extends JFrame{
 		getContentPane().add(bettingButtonPN);
 		bettingButtonPN.setLayout(null);
 		
-		JButton callBTN = new JButton("콜");
+		callBTN = new JButton("콜");
 	
 		callBTN.setToolTipText("전 사람이 배팅한 만큼 배팅합니다.");
 		callBTN.setBounds(12, 48, 97, 23);
 		bettingButtonPN.add(callBTN);
 		
-		JButton doubleBTN = new JButton("더블");
+		doubleBTN = new JButton("더블");
 		doubleBTN.setToolTipText("전 사람이 배팅한 금액의 두배를 배팅합니다.");
 		doubleBTN.setBounds(121, 48, 97, 23);
 		bettingButtonPN.add(doubleBTN);
 		
-		JButton halfBTN = new JButton("하프");
+		halfBTN = new JButton("하프");
 		halfBTN.setToolTipText("현재 걸린 금액의 절반을 배팅합니다.");
 		halfBTN.setBounds(12, 81, 97, 23);
 		bettingButtonPN.add(halfBTN);
 		
-		JButton dieBTN = new JButton("다이");
+		dieBTN = new JButton("다이");
 		dieBTN.setToolTipText("이번 판 배팅을 포기합니다.");
 		dieBTN.setBounds(121, 81, 97, 23);
 		bettingButtonPN.add(dieBTN);
@@ -564,7 +591,15 @@ public class GameRoomUI extends JFrame{
 		p2Die.setVisible(false);
 		p3Die.setVisible(false);
 		
-	
+		p0State.setIcon(null);
+		p1State.setIcon(null);
+		p2State.setIcon(null);
+		p3State.setIcon(null);
+		
+		p0State.setVisible(true);
+		p1State.setVisible(true);
+		p2State.setVisible(true);
+		p3State.setVisible(true);
 		//유저가 n번째일때 오른쪽에는 n+3 %4 번이 위치 왼쪽에는 n+1 %4번이 위치
 		
 		
@@ -583,8 +618,24 @@ public class GameRoomUI extends JFrame{
 			bettingButtonPN.setVisible(false);
 			//배팅시
 		}else if(client.user.room.gameState.equals("bet")){
+			
+			
 			cardSelectLB.setVisible(false);
+			doubleBTN.setVisible(true);
 			bettingButtonPN.setVisible(true);
+			halfBTN.setVisible(true);
+			callBTN.setVisible(true);
+			if(client.user.room.bet*2 > client.user.money){
+				doubleBTN.setVisible(false);
+			}
+			int half=client.user.room.amountMoney+client.user.room.bet;
+			if(half> client.user.money ){
+				halfBTN.setVisible(false);
+			}
+			if(client.user.room.bet > client.user.money){
+				callBTN.setVisible(false);
+			}
+			
 				if(client.user.room.playerturn== n){
 					player0PN.setBorder(new LineBorder(new Color(204, 255, 0), 4, true));
 					player1PN.setBorder(null);
@@ -663,6 +714,14 @@ public class GameRoomUI extends JFrame{
 		for(int i=0; i< client.user.room.userArray.size();i++){
 			
 			if(client.user.room.userArray.get(i).playerNumber == n){
+				
+				if(client.user.room.userArray.get(i).state.equals("call")){
+					p0State.setIcon(callimg);
+				}else if(client.user.room.userArray.get(i).state.equals("double")){
+					p0State.setIcon(doubleimg);
+				}else if(client.user.room.userArray.get(i).state.equals("half")){
+					p0State.setIcon(halfimg);
+				}
 				p0Nick.setText(client.user.room.userArray.get(i).nickName);		
 				p0Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
 				if(client.user.room.userArray.get(i).card1 != 99999){
@@ -684,6 +743,14 @@ public class GameRoomUI extends JFrame{
 					p0Die.setVisible(true);
 				}
 			}else if(client.user.room.userArray.get(i).playerNumber == ((n+1)%4)){
+				
+				if(client.user.room.userArray.get(i).state.equals("call")){
+					p1State.setIcon(callimg);
+				}else if(client.user.room.userArray.get(i).state.equals("double")){
+					p1State.setIcon(doubleimg);
+				}else if(client.user.room.userArray.get(i).state.equals("half")){
+					p1State.setIcon(halfimg);
+				}
 				p1Nick.setText(client.user.room.userArray.get(i).nickName);
 				p1Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
 				if(client.user.room.userArray.get(i).card1 != 99999){
@@ -705,6 +772,14 @@ public class GameRoomUI extends JFrame{
 					p1Die.setVisible(true);
 				}
 			}else if(client.user.room.userArray.get(i).playerNumber == ((n+2)%4)){
+				
+				if(client.user.room.userArray.get(i).state.equals("call")){
+					p2State.setIcon(callimg);
+				}else if(client.user.room.userArray.get(i).state.equals("double")){
+					p2State.setIcon(doubleimg);
+				}else if(client.user.room.userArray.get(i).state.equals("half")){
+					p2State.setIcon(halfimg);
+				}
 				p2Nick.setText(client.user.room.userArray.get(i).nickName);
 				p2Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
 				if(client.user.room.userArray.get(i).card1 != 99999){
@@ -726,6 +801,14 @@ public class GameRoomUI extends JFrame{
 					p2Die.setVisible(true);
 				}
 			}else if(client.user.room.userArray.get(i).playerNumber == ((n+3)%4)){
+				
+				if(client.user.room.userArray.get(i).state.equals("call")){
+					p3State.setIcon(callimg);
+				}else if(client.user.room.userArray.get(i).state.equals("double")){
+					p3State.setIcon(doubleimg);
+				}else if(client.user.room.userArray.get(i).state.equals("half")){
+					p3State.setIcon(halfimg);
+				}
 				p3Nick.setText(client.user.room.userArray.get(i).nickName);
 				p3Money.setText(Integer.toString(client.user.room.userArray.get(i).money));
 				if(client.user.room.userArray.get(i).card1 != 99999){
@@ -822,6 +905,33 @@ public class GameRoomUI extends JFrame{
 			}
 		}.start();
 	}
+	
+	void hand(int card){
+		int n = client.user.playerNumber;
+		try{
+		for(int i=0; i< client.user.room.userArray.size();i++){
+			if(client.user.room.userArray.get(i).playerNumber == ((n)%4)){
+				HandOutCard(n, card);
+				Thread.sleep(100);
+			}else if(client.user.room.userArray.get(i).playerNumber == ((n+1)%4)){
+				HandOutCard(1, card);
+				Thread.sleep(100);
+			}else if(client.user.room.userArray.get(i).playerNumber == ((n+2)%4)){
+				HandOutCard(2, card);
+				Thread.sleep(100);
+			}else if(client.user.room.userArray.get(i).playerNumber == ((n+3)%4)){
+				HandOutCard(3, card);
+				Thread.sleep(100);
+			}
+
+		}
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	
+	
 	void msgSubmit(){
 		try {
 			client.dos.writeUTF(MsgProtocol.GAMEROOM_CHAT+"/"+textField.getText());

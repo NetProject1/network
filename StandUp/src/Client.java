@@ -9,6 +9,8 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import jdk.internal.org.objectweb.asm.Handle;
+
 public class Client implements Runnable {
 	static int PORT=9977; //서버 포트
 	static String IP="111.111.111.111"; //서버 아이피
@@ -210,14 +212,7 @@ public class Client implements Runnable {
 			result=token.nextToken();
 			if(result.equals("OK")){
 			//게임이 시작되었다. 카드 배부 애니메이션을 실행한다. 요건 나중에 수정예정
-			gameroom.HandOutCard(0, 2);
-			Thread.sleep(50);	
-			gameroom.HandOutCard(1, 2);
-			Thread.sleep(50);	
-			gameroom.HandOutCard(2, 2);
-			Thread.sleep(50);
-			gameroom.HandOutCard(3, 2);
-			Thread.sleep(50);
+			gameroom.hand(2);
 			user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
 			}else{
 				JOptionPane.showMessageDialog(null,"인원이 부족합니다.");
@@ -227,14 +222,7 @@ public class Client implements Runnable {
 			break;
 		case MsgProtocol.CODE_CARDSET:
 			//카드 뿌려주는거 수정
-			gameroom.HandOutCard(0, 1);
-			Thread.sleep(50);	
-			gameroom.HandOutCard(1, 1);
-			Thread.sleep(50);	
-			gameroom.HandOutCard(2, 1);
-			Thread.sleep(50);
-			gameroom.HandOutCard(3, 1);
-			Thread.sleep(50);
+			gameroom.hand(1);
 			user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
 			break;
 		case MsgProtocol.CODE_GAMEEND:
@@ -264,6 +252,27 @@ public class Client implements Runnable {
 			result=token.nextToken();
 			JOptionPane.showMessageDialog(null, result);
 			user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
+		case MsgProtocol.CODE_CALL:
+			result=token.nextToken();
+			if(result.equals("FAIL")){
+				result=token.nextToken();
+				JOptionPane.showMessageDialog(null, result);
+			}
+			break;
+		case MsgProtocol.CODE_HALF:
+			result=token.nextToken();
+			if(result.equals("FAIL")){
+				result=token.nextToken();
+				JOptionPane.showMessageDialog(null, result);
+			}
+			break;
+		case MsgProtocol.CODE_DOUBLE:
+			result=token.nextToken();
+			if(result.equals("FAIL")){
+				result=token.nextToken();
+				JOptionPane.showMessageDialog(null, result);
+			}
+			break;
 		}
 		 
 		 }catch (Exception e) {

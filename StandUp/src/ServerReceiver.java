@@ -465,6 +465,7 @@ public class ServerReceiver extends Thread {
 		roomUpdate(user.room.roomNumber);
 	}
 	void betCall(){
+		if(user.money>= user.room.bet){
 		user.state="call";
 		user.money-=user.room.bet;
 		user.room.amountMoney+=user.room.bet;
@@ -515,23 +516,52 @@ public class ServerReceiver extends Thread {
 			user.room.setNextPlayerTurn();
 			roomUpdate(user.room.roomNumber);
 		}
+		
+		}else{
+			try {
+				user.dos.writeUTF(MsgProtocol.CODE_CALL+"/FAIL/금액이 부족합니다.");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	
 	}
 	void betDouble(){
+		if(user.money>= user.room.bet*2){
 		user.state="double";
+		user.room.callReset();
 		user.room.bet=user.room.bet*2;
 		user.money-=user.room.bet;
 		user.room.amountMoney+=user.room.bet;
 		user.room.setNextPlayerTurn();
 		roomUpdate(user.room.roomNumber);
+		}else{
+			try {
+				user.dos.writeUTF(MsgProtocol.CODE_DOUBLE+"/FAIL/금액이 부족합니다.");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	void betHalf(){
+		if(user.money >= ( user.room.bet + (user.room.amountMoney/2))){
 		user.state="half";
+		user.room.callReset();
 		user.room.bet+=user.room.amountMoney/2;
 		user.money-=user.room.bet;
 		user.room.amountMoney+=user.room.bet;
 		user.room.setNextPlayerTurn();
 		roomUpdate(user.room.roomNumber);
+		}else{
+			try {
+				user.dos.writeUTF(MsgProtocol.CODE_HALF+"/FAIL/금액이 부족합니다.");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	void betDie(){
 		user.state="die";
