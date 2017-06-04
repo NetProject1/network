@@ -332,6 +332,7 @@ public class Room {
 		}
 		
 		int max = 0;
+		int goosa=0;
 		for(int i = 0; i<players.size(); i++){
 			//플레이어 i가 땡잡이일때
 			if(players.get(i).cardValue>=400 && players.get(i).cardValue <500){
@@ -345,9 +346,8 @@ public class Room {
 				if(players.get(i).cardValue>=400 && players.get(i).cardValue <500){
 					players.get(i).cardValue = players.get(i).cardValue - 400;
 				}
-			}
-			//플레이어 i가 암행어사일때
-			if(players.get(i).cardValue>=300 && players.get(i).cardValue <400){
+				//플레이어 i가 암행어사일때
+			}else if(players.get(i).cardValue>=300 && players.get(i).cardValue <400){
 				for(int j = 0; j<players.size(); j++){
 					//플레이어 j중에 광땡이 있다면 광땡을 이긴다.
 					if(players.get(j).cardValue == 10000){
@@ -358,11 +358,8 @@ public class Room {
 				if(players.get(i).cardValue>=300 && players.get(i).cardValue <400){
 					players.get(i).cardValue = players.get(i).cardValue - 300;
 				}
-			}
-			
-			// 플레이어 i가 구사일경우
-			int goosa=0;
-			if(players.get(i).cardValue>=200 &&players.get(i).cardValue <300){
+				// 플레이어 i가 구사일경우
+			}else if(players.get(i).cardValue>=200 &&players.get(i).cardValue <300){
 				for(int j = 0; j<players.size(); j++){
 					//플레이어가 모두 알리 이하이면 재경기를 한다.
 					if(players.get(j).cardValue <= 1000){
@@ -382,38 +379,29 @@ public class Room {
 		}
 		User winUSER;
 		int maxvaluePlayers=0;
+		
+		//최대값과 같은 인원이 몇명인지 파악한다.
 		for(int i = 0; i<players.size(); i++){
 			if( players.get(i).cardValue==max){
 				maxvaluePlayers++;
-				winUSER=players.get(i);
-				for(int j = 0; i<userArray.size(); j++){
-					if( userArray.get(i).equals(winUSER)){
-						winner=j;
-						break;
-					}
-				}
 			}
+		}
+		
+		for(int i = 0; i<players.size(); i++){
+			System.out.println(players.get(i).cardValue+":카드점수 별명:"+players.get(i).nickName);
 		}
 		if(maxvaluePlayers>=2){
 			winner=2000;
+		}else{
+			for(int i = 0; i<players.size(); i++){
+				if( players.get(i).cardValue==max){
+					winner=players.get(i).playerNumber;
+				}
+			}
 		}
 		return winner;
 		
-		/*
-		if(max == player[0]){
-			System.out.println("WINNER IS PLAYER "+winner);
-			winner = 0;
-		}else if(max == player[1]){
-			winner = 1;
-			System.out.println("WINNER IS PLAYER "+winner);
-		}else if(max == player[2]){
-			winner = 2;
-			System.out.println("WINNER IS PLAYER "+winner);
-		}else{
-			winner = 3;
-			System.out.println("WINNER IS PLAYER "+winner);
-		}
-		*/
+		
 	}
 }
 

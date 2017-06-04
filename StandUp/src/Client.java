@@ -239,11 +239,12 @@ public class Client implements Runnable {
 				//gameroom 이긴거 애니매이션
 				gameroom.winAnimate();
 				Thread.sleep(4000);
-			
+				user.userReset();
 			}else{
 				//gameroom 진거 애니메이션
 				gameroom.loseAnimate();
 				Thread.sleep(4000);
+				user.userReset();
 			}
 			user.dos.writeUTF(MsgProtocol.ROOM_UPDATE);
 			
@@ -454,6 +455,7 @@ public class Client implements Runnable {
 			}else{
 				user.isReady=false;
 			}
+			user.money=money;
 			user.state=state;
 			user.card1=card1;
 			user.card2=card2;
@@ -497,6 +499,7 @@ public class Client implements Runnable {
 						}else{
 							user.isReady=false;
 						}
+						user.money=money;
 						user.state=state;
 						user.playerNumber=playernum;
 						user.card1=card1;

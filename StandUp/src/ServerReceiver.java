@@ -95,7 +95,6 @@ public class ServerReceiver extends Thread {
 	} 
 	
 	synchronized public void msgParsing(String receiveMsg){
-		System.out.println(receiveMsg);
 		 StringTokenizer token=new StringTokenizer(receiveMsg, "/"); //토큰
 		 String protocol= token.nextToken();//토큰으로 분리된 스트링
 		 String id,pw, nick;
@@ -367,7 +366,6 @@ public class ServerReceiver extends Thread {
 		for(int i=0; i <userArray.size() ;i++){
 			try {
 				if(userArray.get(i).isLogin){
-				System.out.println(userArray.get(i).nickName+"에게 메세지를 보냅니다");
 				userArray.get(i).dos.writeUTF(msg);
 				}
 			} catch (IOException e) {
@@ -460,7 +458,6 @@ public class ServerReceiver extends Thread {
 	void GameRoomEcho(String msg){
 		for(int i=0; i <user.room.userArray.size() ;i++){
 			try {
-				System.out.println(userArray.get(i).nickName+"에게 메세지를 보냅니다");
 				user.room.userArray.get(i).dos.writeUTF(msg);			
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -657,6 +654,7 @@ public class ServerReceiver extends Thread {
 	}
 	void judge(){
 		int winnumber=user.room.judge();
+		System.out.println("승자 번호:"+winnumber);
 		//1000번은 재경기이다.
 		if(winnumber<1000){
 		user.room.gameState="end";
@@ -665,7 +663,7 @@ public class ServerReceiver extends Thread {
 		try{
 		String msg;
 		for(int i=0;i< user.room.userArray.size();i++){
-			if(i!=winnumber){
+			if(user.room.userArray.get(i).playerNumber !=winnumber){
 				userArray.get(i).lose+=1;
 				dbdao.updateLoseMoney(userArray.get(i).id,userArray.get(i).lose,userArray.get(i).money);
 				msg=MsgProtocol.CODE_GAMEEND+"/LOSE";
@@ -692,7 +690,6 @@ public class ServerReceiver extends Thread {
 			//재경기
 			GooSaReStart();
 		}else if(winnumber==2000){
-			System.out.println("같은 카드끼리 재경기이다");
 			SameCardReStart();
 		}
 	}

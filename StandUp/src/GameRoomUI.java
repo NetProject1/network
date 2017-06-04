@@ -547,19 +547,32 @@ public class GameRoomUI extends JFrame{
 		getContentPane().add(winLoseLB);
 		
 		p1Cardset = new JLabel("");
-		p1Cardset.setBounds(284, 385, 80, 72);
+		p1Cardset.setHorizontalAlignment(SwingConstants.CENTER);
+		p1Cardset.setForeground(new Color(255, 20, 147));
+		p1Cardset.setFont(new Font("Gulim", Font.BOLD, 20));
+		p1Cardset.setBounds(284, 385, 160, 72);
 		getContentPane().add(p1Cardset);
 		
 		p0Cardset = new JLabel("");
-		p0Cardset.setBounds(400, 513, 80, 72);
+		p0Cardset.setHorizontalAlignment(SwingConstants.CENTER);
+		p0Cardset.setForeground(new Color(255, 20, 147));
+		p0Cardset.setFont(new Font("Gulim", Font.BOLD, 20));
+		p0Cardset.setBounds(326, 500, 209, 72);
 		getContentPane().add(p0Cardset);
 		
+		
 		p3Cardset = new JLabel("");
-		p3Cardset.setBounds(519, 385, 80, 72);
+		p3Cardset.setHorizontalAlignment(SwingConstants.CENTER);
+		p3Cardset.setForeground(new Color(255, 20, 147));
+		p3Cardset.setFont(new Font("Gulim", Font.BOLD, 20));
+		p3Cardset.setBounds(435, 385, 160, 72);
 		getContentPane().add(p3Cardset);
 		
 		p2Cardset = new JLabel("");
-		p2Cardset.setBounds(400, 220, 80, 72);
+		p2Cardset.setHorizontalAlignment(SwingConstants.CENTER);
+		p2Cardset.setForeground(new Color(255, 20, 147));
+		p2Cardset.setFont(new Font("Gulim", Font.BOLD, 20));
+		p2Cardset.setBounds(337, 220, 198, 72);
 		getContentPane().add(p2Cardset);
 		
 		winLoseLB.setVisible(false);
@@ -823,7 +836,8 @@ public class GameRoomUI extends JFrame{
 							p0Cardset.setText("일 삼 광 땡!");
 						}
 					}else if(cardsetValue>=1000 && cardsetValue<10000){
-						p0Cardset.setText((client.user.selectedCard1%10)+"땡 ");
+						int tang=client.user.selectedCard1%10;
+						p0Cardset.setText((tang)+"땡 ");
 					}else if(cardsetValue>=900 && cardsetValue<1000){
 						p0Cardset.setText("알리");
 					}else if(cardsetValue>=800 && cardsetValue<900){
