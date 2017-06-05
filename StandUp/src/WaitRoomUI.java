@@ -291,7 +291,7 @@ public class WaitRoomUI extends JFrame{
 			String str=(String)JOptionPane.showInputDialog(null, "방 제목 입력:","방 생성",
 					 JOptionPane.PLAIN_MESSAGE, null,
 					 null, "왜 이렇게 혓바닥이 길어?");
-			if(!str.equals(null)){
+			if(str!=null){
 			client.dos.writeUTF(MsgProtocol.MAKEROOM+"/"+str);
 			}
 		} catch (IOException e) {
