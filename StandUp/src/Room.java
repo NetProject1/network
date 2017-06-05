@@ -233,7 +233,7 @@ public class Room {
 		
 		for(int i=1;i<=19;i ++){
 			for (int j = 1; j <= 20; j++) {
-				if(i<=j){
+				if(i< j){
 					int num = (i+j)%10;
 					priority[i][j] = num; // 끗
 					if((i+10)==j){
@@ -249,6 +249,13 @@ public class Room {
 		
 		//10땡
 		priority[10][20] = priority[10][20]+1100;
+		//9876땡
+		priority[9][19] = priority[9][19]+1090;
+		priority[10][20] = priority[10][20]+1080;
+		priority[10][20] = priority[10][20]+1070;
+		priority[10][20] = priority[10][20]+1060;
+		//5땡
+		priority[10][20] = priority[10][20]+1050;
 		//알리1,2
 		priority[1][12] = priority[1][12] + 900;
 		priority[1][2] = priority[1][2] + 900;

@@ -830,8 +830,8 @@ public class GameRoomUI extends JFrame{
 					}
 					if(cardsetValue==Integer.MAX_VALUE){
 						p0Cardset.setText("삼 팔 광 땡!");
-					}else if(cardsetValue==10000){
-						if(client.user.selectedCard2==18 || client.user.selectedCard1==18){
+					}else if(Integer.MAX_VALUE> cardsetValue && cardsetValue>=10000){
+						if(client.user.selectedCard2==18 && client.user.selectedCard1==11){
 							p0Cardset.setText("일 팔 광 땡!");
 						}else{
 							p0Cardset.setText("일 삼 광 땡!");
@@ -891,8 +891,8 @@ public class GameRoomUI extends JFrame{
 					}
 					if(cardsetValue==Integer.MAX_VALUE){
 						p1Cardset.setText("삼 팔 광 땡!");
-					}else if(cardsetValue==10000){
-						if(client.user.room.userArray.get(i).card2==18 || client.user.room.userArray.get(i).card1==18){
+					}else if(Integer.MAX_VALUE> cardsetValue && cardsetValue>=10000){
+						if(client.user.room.userArray.get(i).card1==11 && client.user.room.userArray.get(i).card2==18){
 							p1Cardset.setText("일 팔 광 땡!");
 						}else{
 							p1Cardset.setText("일 삼 광 땡!");
@@ -953,8 +953,8 @@ public class GameRoomUI extends JFrame{
 					}
 					if(cardsetValue==Integer.MAX_VALUE){
 						p2Cardset.setText("삼 팔 광 땡!");
-					}else if(cardsetValue==10000){
-						if(client.user.room.userArray.get(i).card2==18 || client.user.room.userArray.get(i).card1==18){
+					}else if(Integer.MAX_VALUE> cardsetValue && cardsetValue>=10000){
+						if(client.user.room.userArray.get(i).card1==11 && client.user.room.userArray.get(i).card2==18){
 							p2Cardset.setText("일 팔 광 땡!");
 						}else{
 							p2Cardset.setText("일 삼 광 땡!");
@@ -1015,8 +1015,8 @@ public class GameRoomUI extends JFrame{
 					}
 					if(cardsetValue==Integer.MAX_VALUE){
 						p3Cardset.setText("삼 팔 광 땡!");
-					}else if(cardsetValue==10000){
-						if(client.user.room.userArray.get(i).card2==18 || client.user.room.userArray.get(i).card1==18){
+					}else if(Integer.MAX_VALUE> cardsetValue && cardsetValue>=10000){
+						if(client.user.room.userArray.get(i).card1==11 && client.user.room.userArray.get(i).card2==18){
 							p3Cardset.setText("일 팔 광 땡!");
 						}else{
 							p3Cardset.setText("일 삼 광 땡!");
